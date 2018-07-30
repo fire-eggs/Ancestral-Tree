@@ -34,7 +34,7 @@ namespace AncesTree.Controls
             set { lineStyleCombo1.SelectedItem = value; }
         }
 
-        public Color LineColor
+        public ColorValues LineColor
         {
             get { return colorButton1.Value; }
             set { colorButton1.Value = value; }
@@ -42,7 +42,7 @@ namespace AncesTree.Controls
 
         public Pen LinePen
         {
-            get { return new Pen(LineColor, LineWeight) {DashStyle = LineStyle};}
+            get { return new Pen(LineColor.GetColor(), LineWeight) {DashStyle = LineStyle};}
         }
 
         private void Fire()
@@ -53,7 +53,7 @@ namespace AncesTree.Controls
                 OnLineStyleChange(this);
         }
 
-        private void colorButton1_OnColorChange(ColorButton sender, Color newValue)
+        private void colorButton1_OnColorChange(ColorButton sender, ColorValues newValue)
         {
             Fire();
         }

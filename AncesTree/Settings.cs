@@ -23,6 +23,7 @@ namespace AncesTree
         void Settings_Load(object sender, EventArgs e)
         {
             _loadComplete = false;
+            _settings = TreeConfiguration.LoadConfig();
             LoadSettings();
             _loadComplete = true;
             MakeTree();
@@ -33,54 +34,11 @@ namespace AncesTree
 
         private void LoadSettings()
         {
-            // TODO read from config file
-            _settings = new TreeConfiguration();
-            _settings.GenerationGap = 30;
-            _settings.NodeGap = 20;
-            _settings.SpouseGap = 20;
-            _settings.RootLoc = Configuration.Location.Top;
-            _settings.Align = Configuration.AlignmentInLevel.TowardsRoot;
-
-            _settings.NodeBorder = new LineStyleValues {
-                                                            LineColor = Color.Black,
-                                                            LineWeight = 1,
-                                                            LineStyle = DashStyle.Solid
-                                                        };
-            _settings.SpouseLine = new LineStyleValues {
-                                                            LineColor = Color.Black,
-                                                            LineWeight = 1,
-                                                            LineStyle = DashStyle.Solid
-                                                        };
-            _settings.ChildLine = new LineStyleValues {
-                                                            LineColor = Color.Black,
-                                                            LineWeight = 1,
-                                                            LineStyle = DashStyle.Solid
-                                                        };
-            _settings.MMargLine = new LineStyleValues
-            {
-                LineColor = Color.Coral,
-                LineWeight = 2,
-                LineStyle = DashStyle.Dash
-            };
-            _settings.DuplLine = new LineStyleValues
-            {
-                LineColor = Color.CornflowerBlue,
-                LineWeight = 2,
-                LineStyle = DashStyle.Dash
-            };
             boxPen.Values = _settings.NodeBorder;
             spousePen.Values = _settings.SpouseLine;
             childPen.Values = _settings.ChildLine;
             mmargPen.Values = _settings.MMargLine;
             duplLine.Values = _settings.DuplLine;
-
-            _settings.MajorFont = new Font("Times New Roman", 10);
-            _settings.MinorFont = new Font("Times New Roman", 10);
-
-            _settings.BackColor = Color.Beige;
-            _settings.MaleColor = Color.PowderBlue;
-            _settings.FemaleColor = Color.Pink;
-            _settings.UnknownColor = Color.Plum;
 
             btnMaleColor.Value = _settings.MaleColor;
             btnFemaleColor.Value = _settings.FemaleColor;
@@ -88,7 +46,7 @@ namespace AncesTree
             btnBackColor.Value = _settings.BackColor;
         }
 
-        private void OnColorChange(ColorButton sender, Color newValue)
+        private void OnColorChange(ColorButton sender, ColorValues newValue)
         {
             // TODO is member binding possible?
             // TODO just rebuild settings from controls?
@@ -158,17 +116,17 @@ namespace AncesTree
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _settings.MajorFont = doFont(_settings.MajorFont);
+             _settings.MajorFont = doFont(_settings.MajorFont);
             Rebuild();
         }
 
-        private Font doFont(Font fontIn)
+        private FontValues doFont(FontValues fontIn)
         {
             var dlg = new FontDialog();
-            dlg.Font = fontIn;
+            dlg.Font = fontIn.GetFont();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                return dlg.Font;
+                return new FontValues {Family = dlg.Font.Name, Size = dlg.Font.SizeInPoints};
             }
             return fontIn;
         }
@@ -189,7 +147,30 @@ namespace AncesTree
                 _settings.SpouseLine = spousePen.Values;
             if (sender == childPen)
                 _settings.ChildLine = childPen.Values;
+            if (sender == mmargPen)
+                _settings.MMargLine = mmargPen.Values;
+            if (sender == duplLine)
+                _settings.DuplLine = duplLine.Values;
 
+            Rebuild();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            _settings.Save();
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            _settings = TreeConfiguration.LoadConfig();
+            LoadSettings();
+            Rebuild();
+        }
+
+        private void btnDefault_Click(object sender, EventArgs e)
+        {
+            _settings = TreeConfiguration.DefaultSettings();
+            LoadSettings();
             Rebuild();
         }
     }

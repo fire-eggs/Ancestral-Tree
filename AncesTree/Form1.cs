@@ -119,14 +119,11 @@ namespace AncesTree
             Close();
         }
 
-        private void treePanel_Paint(object sender, PaintEventArgs e)
-        {
-        }
-
         private void TreePerson(Person val)
         {
             // TODO read config from file
-            var config = TreeConfiguration.DefaultSettings();
+            //var config = TreeConfiguration.DefaultSettings();
+            var config = TreeConfiguration.LoadConfig();
             var tree = TreeBuild.BuildTree(treePanel1, config, val);
 
             // create the NodeExtentProvider for TextInBox nodes
@@ -237,6 +234,8 @@ namespace AncesTree
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // save to image
+
             using (Bitmap b = new Bitmap(treePanel1.Width, treePanel1.Height))
             {
                 using (Graphics g = Graphics.FromImage(b))

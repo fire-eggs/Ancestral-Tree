@@ -41,7 +41,6 @@
             this.colorButton1.Size = new System.Drawing.Size(39, 23);
             this.colorButton1.TabIndex = 0;
             this.colorButton1.UseVisualStyleBackColor = false;
-            this.colorButton1.Value = System.Drawing.SystemColors.Control;
             this.colorButton1.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.colorButton1_OnColorChange);
             // 
             // lineStyleCombo1

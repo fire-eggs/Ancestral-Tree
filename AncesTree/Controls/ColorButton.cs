@@ -2,12 +2,13 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using AncesTree.TreeModel;
 
 namespace AncesTree.Controls
 {
     public class ColorButton : Button
     {
-        public delegate void ColorChanged(ColorButton sender, Color newValue);
+        public delegate void ColorChanged(ColorButton sender, ColorValues newValue);
 
         [Browsable(true)]
         public event ColorChanged OnColorChange;
@@ -21,19 +22,19 @@ namespace AncesTree.Controls
         void ColorButton_Click(object sender, EventArgs e)
         {
             var dlg = new ColorDialog();
-            dlg.Color = Value;
+            dlg.Color = Value.GetColor();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                Value = dlg.Color;
+                Value = new ColorValues {ARGB = dlg.Color.ToArgb()};
                 if (OnColorChange != null)
                     OnColorChange(this, Value);
             }
         }
 
-        public Color Value
+        public ColorValues Value
         {
-            get { return BackColor; }
-            set { BackColor = value; }
+            get { return new ColorValues {ARGB = BackColor.ToArgb()}; }
+            set { BackColor = Color.FromArgb(value.ARGB); }
         }
 
         public override string Text

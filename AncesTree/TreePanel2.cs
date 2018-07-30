@@ -37,7 +37,7 @@ namespace AncesTree
             if (_config == null)
                 return;
 
-            g.Clear(_config.BackColor);
+            g.Clear(_config.BackColor.GetColor());
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin, _margin);
 
@@ -187,9 +187,8 @@ namespace AncesTree
             using (Brush b = new SolidBrush(tib.BackColor))
                 _g.FillRectangle(b, box);
             _g.DrawRectangle(_border, box);
-            _g.DrawString(tib.Text, 
-                tib.DrawVert ? _config.MajorFont : _config.MinorFont,
-                new SolidBrush(TEXT_COLOR), box.X, box.Y);
+            using (var font = tib.DrawVert ? _config.MajorFont.GetFont() : _config.MinorFont.GetFont())
+                _g.DrawString(tib.Text, font, new SolidBrush(TEXT_COLOR), box.X, box.Y);
         }
 
         private void PaintEdges(ITreeData parent)

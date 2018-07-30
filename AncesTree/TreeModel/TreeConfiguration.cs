@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DrawAnce;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using AncesTree.TreeLayout;
 
 namespace AncesTree.TreeModel
 {
@@ -9,19 +9,39 @@ namespace AncesTree.TreeModel
     {
         public DashStyle LineStyle;
         public int LineWeight;
-        public Color LineColor;
+        public ColorValues LineColor;
 
         public Pen GetPen()
         {
-            return new Pen(LineColor, LineWeight) {DashStyle = LineStyle};
+            return new Pen(LineColor.GetColor(), LineWeight) {DashStyle = LineStyle};
         }
     }
 
-    public class TreeConfiguration : DefaultConfiguration, IDisposable
+    public struct FontValues
+    {
+        public string Family;
+        public float Size;
+
+        public Font GetFont()
+        {
+            return new Font(Family, Size);
+        }
+    }
+
+    public struct ColorValues // TODO Json deserialize problem
+    {
+        public Int32 ARGB;
+        public Color GetColor() { return Color.FromArgb(ARGB);}
+    }
+
+    public class TreeConfiguration : DefaultConfiguration
     {
         public TreeConfiguration() : base (0, 0)
         {
+            Inited = false;
         }
+
+        public bool Inited { get; set; }
 
         public int GenerationGap
         {
@@ -49,8 +69,8 @@ namespace AncesTree.TreeModel
 
         public int SpouseGap { get; set; }
 
-        public Font MajorFont { get; set; }
-        public Font MinorFont { get; set; }
+        public FontValues MajorFont { get; set; }
+        public FontValues MinorFont { get; set; }
 
         public LineStyleValues NodeBorder { get; set; }
         public LineStyleValues SpouseLine { get; set; }
@@ -58,65 +78,79 @@ namespace AncesTree.TreeModel
         public LineStyleValues MMargLine { get; set; }
         public LineStyleValues DuplLine { get; set; }
 
-
-        public Color MaleColor { get; set; }
-        public Color FemaleColor { get; set; }
-        public Color UnknownColor { get; set; }
-        public Color BackColor { get; set; }
+        public ColorValues MaleColor { get; set; }
+        public ColorValues FemaleColor { get; set; }
+        public ColorValues UnknownColor { get; set; }
+        public ColorValues BackColor { get; set; }
         public bool RootOnLeft { get { return RootLoc == Location.Left; } }
 
         public static TreeConfiguration DefaultSettings()
         {
             var config = new TreeConfiguration();
+            config.Inited = true;
             config.NodeGap = 20; // TODO gapBetweenNodes;
             config.GenerationGap = 30; // TODO gapBetweenLevels;
             config.Align = AlignmentInLevel.TowardsRoot;
             config.RootLoc = Location.Top;
-            config.MajorFont = new Font("Times New Roman", 10);
-            config.MinorFont = new Font("Times New Roman", 8);
-            config.MaleColor = Color.PowderBlue;
-            config.FemaleColor = Color.Pink;
-            config.UnknownColor = Color.Plum;
+            config.MajorFont = new FontValues {Family = "Times New Roman", Size = 10};
+            config.MinorFont = new FontValues {Family = "Times New Roman", Size = 8};
+            config.MaleColor = new ColorValues { ARGB = Color.PowderBlue.ToArgb()};
+            config.FemaleColor = new ColorValues { ARGB = Color.Pink.ToArgb() };
+            config.UnknownColor = new ColorValues { ARGB = Color.Plum.ToArgb() };
             config.NodeBorder = new LineStyleValues
             {
-                LineColor = Color.Black,
+                LineColor = new ColorValues { ARGB = Color.Black.ToArgb() },
                 LineStyle = DashStyle.Solid,
                 LineWeight = 1
             };
             config.SpouseLine = new LineStyleValues
             {
-                LineColor = Color.Black,
+                LineColor = new ColorValues { ARGB = Color.Black.ToArgb() },
                 LineStyle = DashStyle.Solid,
                 LineWeight = 1
             };
             config.ChildLine = new LineStyleValues
             {
-                LineColor = Color.Black,
+                LineColor = new ColorValues { ARGB = Color.Black.ToArgb() },
                 LineStyle = DashStyle.Solid,
                 LineWeight = 1
             };
             config.MMargLine = new LineStyleValues
             {
-                LineColor = Color.Coral,
+                LineColor = new ColorValues { ARGB = Color.Coral.ToArgb() },
                 LineWeight = 2,
                 LineStyle = DashStyle.Dash
             };
             config.DuplLine = new LineStyleValues
             {
-                LineColor = Color.CornflowerBlue,
+                LineColor = new ColorValues { ARGB = Color.CornflowerBlue.ToArgb() },
                 LineWeight = 2,
                 LineStyle = DashStyle.Dash
             };
 
-            config.BackColor = Color.Bisque;
+            config.BackColor = new ColorValues { ARGB = Color.Bisque.ToArgb() };
             return config;
         }
 
-
-        public void Dispose()
+        public void Save()
         {
-            MajorFont.Dispose();
-            MinorFont.Dispose();
+            Inited = true;
+            AppSettings<TreeConfiguration>.Save(this, "TreeConfig.jsn");
+        }
+
+        public static TreeConfiguration LoadConfig()
+        {
+            try
+            {
+                var config = AppSettings<TreeConfiguration>.Load("TreeConfig.jsn");
+                if (!config.Inited)
+                    config = DefaultSettings();
+                return config;
+            }
+            catch (Exception)
+            {
+                return DefaultSettings();
+            }
         }
     }
 }

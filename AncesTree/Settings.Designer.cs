@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.treePanel21 = new AncesTree.TreePanel2();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -54,6 +54,11 @@
             this.mmargPen = new AncesTree.Controls.PenStyle();
             this.duplLine = new AncesTree.Controls.PenStyle();
             this.penStyle2 = new AncesTree.Controls.PenStyle();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnDefault = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // treePanel21
@@ -75,15 +80,6 @@
             this.label1.Size = new System.Drawing.Size(48, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Preview:";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 429);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -118,7 +114,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 9;
-            this.button3.Text = "button3";
+            this.button3.Text = "Font ...";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -128,7 +124,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 10;
-            this.button4.Text = "button4";
+            this.button4.Text = "Font...";
             this.button4.UseVisualStyleBackColor = true;
             // 
             // label5
@@ -175,7 +171,6 @@
             this.btnMaleColor.Size = new System.Drawing.Size(32, 23);
             this.btnMaleColor.TabIndex = 16;
             this.btnMaleColor.UseVisualStyleBackColor = false;
-            this.btnMaleColor.Value = System.Drawing.SystemColors.Control;
             this.btnMaleColor.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.OnColorChange);
             // 
             // btnFemaleColor
@@ -186,7 +181,6 @@
             this.btnFemaleColor.Size = new System.Drawing.Size(32, 23);
             this.btnFemaleColor.TabIndex = 17;
             this.btnFemaleColor.UseVisualStyleBackColor = false;
-            this.btnFemaleColor.Value = System.Drawing.SystemColors.Control;
             this.btnFemaleColor.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.OnColorChange);
             // 
             // btnUnknownColor
@@ -197,7 +191,6 @@
             this.btnUnknownColor.Size = new System.Drawing.Size(32, 23);
             this.btnUnknownColor.TabIndex = 18;
             this.btnUnknownColor.UseVisualStyleBackColor = false;
-            this.btnUnknownColor.Value = System.Drawing.SystemColors.Control;
             this.btnUnknownColor.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.OnColorChange);
             // 
             // btnBackColor
@@ -208,12 +201,10 @@
             this.btnBackColor.Size = new System.Drawing.Size(32, 23);
             this.btnBackColor.TabIndex = 19;
             this.btnBackColor.UseVisualStyleBackColor = false;
-            this.btnBackColor.Value = System.Drawing.SystemColors.Control;
             this.btnBackColor.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.OnColorChange);
             // 
             // boxPen
             // 
-            this.boxPen.LineColor = System.Drawing.SystemColors.Control;
             this.boxPen.Location = new System.Drawing.Point(90, 92);
             this.boxPen.Name = "boxPen";
             this.boxPen.Size = new System.Drawing.Size(211, 31);
@@ -258,7 +249,6 @@
             // 
             // spousePen
             // 
-            this.spousePen.LineColor = System.Drawing.SystemColors.Control;
             this.spousePen.Location = new System.Drawing.Point(90, 120);
             this.spousePen.Name = "spousePen";
             this.spousePen.Size = new System.Drawing.Size(211, 31);
@@ -267,7 +257,6 @@
             // 
             // childPen
             // 
-            this.childPen.LineColor = System.Drawing.SystemColors.Control;
             this.childPen.Location = new System.Drawing.Point(90, 148);
             this.childPen.Name = "childPen";
             this.childPen.Size = new System.Drawing.Size(211, 31);
@@ -276,7 +265,6 @@
             // 
             // mmargPen
             // 
-            this.mmargPen.LineColor = System.Drawing.SystemColors.Control;
             this.mmargPen.Location = new System.Drawing.Point(90, 178);
             this.mmargPen.Name = "mmargPen";
             this.mmargPen.Size = new System.Drawing.Size(211, 31);
@@ -285,7 +273,6 @@
             // 
             // duplLine
             // 
-            this.duplLine.LineColor = System.Drawing.SystemColors.Control;
             this.duplLine.Location = new System.Drawing.Point(90, 204);
             this.duplLine.Name = "duplLine";
             this.duplLine.Size = new System.Drawing.Size(211, 31);
@@ -294,17 +281,64 @@
             // 
             // penStyle2
             // 
-            this.penStyle2.LineColor = System.Drawing.SystemColors.Control;
             this.penStyle2.Location = new System.Drawing.Point(90, 204);
             this.penStyle2.Name = "penStyle2";
             this.penStyle2.Size = new System.Drawing.Size(211, 31);
             this.penStyle2.TabIndex = 28;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(29, 424);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 29;
+            this.btnSave.Text = "Save";
+            this.toolTip1.SetToolTip(this.btnSave, "Save current settings");
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnDefault
+            // 
+            this.btnDefault.Location = new System.Drawing.Point(293, 424);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Size = new System.Drawing.Size(75, 23);
+            this.btnDefault.TabIndex = 30;
+            this.btnDefault.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnDefault, "Use default settings");
+            this.btnDefault.UseVisualStyleBackColor = true;
+            this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(198, 424);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.TabIndex = 31;
+            this.btnReset.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnReset, "Return to last loaded settings");
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(389, 424);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 32;
+            this.btnClose.Text = "Close";
+            this.toolTip1.SetToolTip(this.btnClose, "Close the dialog. Unsaved changes will not be preserved.");
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(724, 464);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnDefault);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.duplLine);
             this.Controls.Add(this.mmargPen);
             this.Controls.Add(this.childPen);
@@ -327,7 +361,6 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.treePanel21);
             this.Name = "Settings";
@@ -341,7 +374,6 @@
 
         private TreePanel2 treePanel21;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -365,5 +397,10 @@
         private Controls.PenStyle mmargPen;
         private Controls.PenStyle duplLine;
         private Controls.PenStyle penStyle2;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnDefault;
+        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnClose;
     }
 }
