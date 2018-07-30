@@ -14,6 +14,7 @@ namespace AncesTree.TreeModel
         int Wide { get; }
         int High { get; }
         int ParentVertLocX { get; }
+        bool Vertical { get; }
     }
 
     public class PersonNode : ITreeData
@@ -25,16 +26,19 @@ namespace AncesTree.TreeModel
         public int ParentVertLocX { get; private set; }
         public bool IsReal { get; set; }
 
+        public bool Vertical { get; private set; }
+
         public Person Who { get; set; }
 
-        public PersonNode(Person who, string txt, int width, int height)
+        public PersonNode(Person who, string txt, int width, int height, bool vertical)
         {
             Who = who;
             Text = txt;
             Wide = width;
             High = height;
+            Vertical = vertical;
 
-            ParentVertLocX = (int) (width/2.0);
+            ParentVertLocX = Vertical ? (int)(height/2.0) : (int) (width/2.0);
 
             IsReal = true;
         }
@@ -73,12 +77,27 @@ namespace AncesTree.TreeModel
     {
         public const int UNION_JOIN_WIDE = 20;     // TODO union-join-width from settings
 
+        public bool Vertical { get; private set; }
+
         public int Wide
         {
-            get { return P1.Wide + P2.Wide + UNION_JOIN_WIDE; }
+            get
+            {
+                if (Vertical)
+                    return Math.Max(P1.Wide, P2.Wide);
+                return P1.Wide + P2.Wide + UNION_JOIN_WIDE;
+            }
         }
 
-        public int High { get { return Math.Max(P1.High, P2.High); } }
+        public int High
+        {
+            get
+            {
+                if (Vertical)
+                    return P1.High + P2.High + UNION_JOIN_WIDE;
+                return Math.Max(P1.High, P2.High);
+            }
+        }
 
         public int ParentVertLocX
         {
@@ -87,6 +106,8 @@ namespace AncesTree.TreeModel
                 if (P1.DrawVert) // line should be drawn from P1
                     return P1.ParentVertLocX;
                 // line should be drawn from P2
+                if (Vertical)
+                    return P1.High + UNION_JOIN_WIDE + P2.ParentVertLocX;
                 return P1.Wide + UNION_JOIN_WIDE + P2.ParentVertLocX;
             }
         }
@@ -101,14 +122,14 @@ namespace AncesTree.TreeModel
 
         public ITreeData DupNode { get; set; }
 
-        public UnionNode(PersonNode p1, PersonNode p2, string unionId)
+        public UnionNode(PersonNode p1, PersonNode p2, string unionId, bool vertical)
         {
             IsReal = true;
             P1 = p1;
             P2 = p2;
             UnionId = unionId;
+            Vertical = vertical;
         }
-
     }
 
     public class NodeFactory : IDisposable
@@ -116,12 +137,14 @@ namespace AncesTree.TreeModel
         private readonly Graphics _graphics;
         private readonly Font _mainFont;
         private readonly Font _spouseFont;
+        private readonly bool _vertOrient;
 
-        public NodeFactory(Control c, Font f, Font spouseFont)
+        public NodeFactory(Control c, Font f, Font spouseFont, bool vertOrient)
         {
             _graphics = c.CreateGraphics();
             _mainFont = f;
             _spouseFont = spouseFont;
+            _vertOrient = vertOrient;
         }
 
         public void Dispose()
@@ -140,7 +163,7 @@ namespace AncesTree.TreeModel
 
             int w = (int) (txtSz.Width + 1);
             int h = (int) (txtSz.Height);
-            var node = new PersonNode(p, s, w, h);
+            var node = new PersonNode(p, s, w, h, _vertOrient);
             node.BackColor = clr;
             node.DrawVert = !isSpouse; // TODO brother/sister incest: both spouses are children
 
@@ -151,7 +174,7 @@ namespace AncesTree.TreeModel
         {
             var p1A = (PersonNode) p1;
             var p2A = (PersonNode) p2;
-            var node = new UnionNode(p1A, p2A, unionId);
+            var node = new UnionNode(p1A, p2A, unionId, _vertOrient);
             p1A.IsReal = p1A.DrawVert;  // TODO brother/sister incest: both spouses are children
             p2A.IsReal = p2A.DrawVert;
             return node;

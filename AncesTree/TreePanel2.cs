@@ -170,8 +170,16 @@ namespace AncesTree
                 if (bar != null)
                 {
                     Rectangle box1 = new Rectangle(box.X, box.Y, bar.P1.Wide, bar.P1.High);
+                    Rectangle box2;
+                    if (bar.Vertical)
+                    {
+                        box2 = new Rectangle(box.X, box.Y + bar.P1.High + UNION_BAR_WIDE, bar.P2.Wide, bar.P2.High);
+                    }
+                    else
+                    {
+                        box2 = new Rectangle(box.X + bar.P1.Wide + UNION_BAR_WIDE, box.Y, bar.P2.Wide, bar.P2.High);
+                    }
                     paintABox(bar.P1, box1);
-                    Rectangle box2 = new Rectangle(box.X + bar.P1.Wide + UNION_BAR_WIDE, box.Y, bar.P2.Wide, bar.P2.High);
                     paintABox(bar.P2, box2);
                 }
 
@@ -201,7 +209,12 @@ namespace AncesTree
                     paintEdges(parent as PersonNode);
             }
             else
-                paintEdges(parent as UnionNode);
+            {
+                if (parent.Vertical)
+                    paintEdgesV(parent as UnionNode);
+                else
+                    paintEdgesH(parent as UnionNode);
+            }
             foreach (var child in getChildren(parent))
             {
                 PaintEdges(child);
@@ -210,19 +223,19 @@ namespace AncesTree
 
         private void paintEdges(PersonNode parent)
         {
-            Rect b1 = getBoundsOfNode(parent);
+            var b1 = drawBounds(parent);
 
             // Spouse connectors in a multi-marriage case.
             // All spouses have been drawn to the right of 
             // this node.
             if (parent.HasSpouses)
             {
-                int leftX = (int)b1.Right;
-                int leftY = (int) (b1.Top + b1.Height/2);
+                int leftX = b1.Right;
+                int leftY = b1.Top + b1.Height/2;
                 foreach (var node in parent.Spouses)
                 {
-                    Rect b3 = getBoundsOfNode(node);
-                    int rightX = (int) b3.Left;
+                    var b3 = drawBounds(node);
+                    int rightX = b3.Left;
 
                     // TODO consider drawing distinct line for each?
                     _g.DrawLine(_multEdge, leftX, leftY, rightX, leftY);
@@ -232,91 +245,30 @@ namespace AncesTree
             if (GetTree().isLeaf(parent)) // No children, nothing further to do
                 return;
 
-            // Children connectors. Used when PersonNode represents
-            // a spouse in a multi-marriage.
-
-            // TODO refactor common code
             // center-bottom of parent
-            int parentX = (int)(b1.Left + b1.Width / 2);
-            int parentY = (int)(b1.Bottom);
+            int parentX = b1.Left + b1.Width / 2;
+            int parentY = b1.Bottom;
 
-            // target for vertical line from child
-            int targetY = parentY + (gapBetweenLevels / 2);
-
-            // vertical line from bottom of parent to half-way down to next level
-            _g.DrawLine(_border, parentX, parentY, parentX, targetY);
-
-            // determine the left/right of the horizontal line
-            int minChildX = int.MaxValue;
-            int maxChildX = int.MinValue;
-
-            foreach (var child in getChildren(parent))
-            {
-                // Do not draw 'I'm a child' line for spouses
-                if (child is PersonNode && !((PersonNode)child).DrawVert)
-                    continue;
-
-                Rect b2 = getBoundsOfNode(child);
-                //int childX = (int) (b2.Left + b2.Width/2);
-                int childX = (int)b2.Left + child.ParentVertLocX;
-                int childY = (int)(b2.Top);
-
-                minChildX = Math.Min(minChildX, childX);
-                maxChildX = Math.Max(maxChildX, childX);
-
-                // vertical line from top of child to half-way up to previous level
-                _g.DrawLine(_border, childX, childY, childX, targetY);
-            }
-
-            try
-            {
-                _g.DrawLine(_border, minChildX, targetY, maxChildX, targetY);
-            }
-            catch (Exception)
-            {
-                // TODO why?
-            }
-
-            // Union has a single child. Vertical from child unlikely to
-            // connect to vertical from union. Draw a horizontal connector.
-            if (minChildX == maxChildX)
-                _g.DrawLine(_border, minChildX, targetY, parentX, targetY);
-
+            DrawChildrenEdgesH(parent, parentX, parentY);
         }
 
-        private void paintEdges(UnionNode parent)
+        private void DrawChildrenEdgesH(ITreeData parent, int startx, int starty)
         {
-            // Draw any connectors associated with a Union.
-            // a. Connector between spouse boxes
-            // b. Drop line from connector to child horz. line
-            // c. Child horz. line
-            // d. Vertical line from each child to child horz. line
+            // Common code to draw edges from parent-node to children-nodes.
+            // Horizontal (root at top) variant.
+            // Used for UnionNode parent, and PersonNode parent in the multi-marriage
+            // scenario.
+            // Start position: place to start whether a union or a person node
 
-            Rect b1 = getBoundsOfNode(parent);
+            var b1 = drawBounds(parent);
 
-            // horz connector between spouse boxes
-            int y = (int)(b1.Top + (b1.Height / 2));
-            int x = (int)(b1.Left + parent.P1.Wide);
-            _g.DrawLine(_border, x, y, x + UNION_BAR_WIDE, y);
+            // Bottom point - vertical line from start position to child line
+            int targetY = b1.Bottom + (gapBetweenLevels / 2);
 
-            if (drawDuplicateUnion(parent))
-                return;
+            // Vertical connector from start position to child-line
+            _g.DrawLine(_border, startx, starty, startx, targetY);
 
-            // union has no children, we're done
-            if (!hasChildren(parent))
-                return;
-
-            // Top point - vertical line from connector to child line
-            int vertLx = x + UNION_BAR_WIDE / 2;
-            int vertLy = y;
-
-            // Bottom point - vertical line from connector to child line
-            int targetY = (int)(b1.Top + parent.High + (gapBetweenLevels / 2));
-
-            // Vertical connector from spouse line to child line
-            _g.DrawLine(_border, vertLx, vertLy, vertLx, targetY);
-
-            // determine the left/right of the horizontal line
+            // determine the left/right of the child-line
             int minChildX = int.MaxValue;
             int maxChildX = int.MinValue;
 
@@ -326,10 +278,10 @@ namespace AncesTree
                 if (child is PersonNode && !((PersonNode)child).DrawVert)
                     continue;
 
-                Rect b2 = getBoundsOfNode(child);
+                var b2 = drawBounds(child);
                 //int childX = (int) (b2.Left + b2.Width/2);
-                int childX = (int)b2.Left + child.ParentVertLocX;
-                int childY = (int)(b2.Top);
+                int childX = b2.Left + child.ParentVertLocX;
+                int childY = b2.Top;
 
                 minChildX = Math.Min(minChildX, childX);
                 maxChildX = Math.Max(maxChildX, childX);
@@ -342,11 +294,81 @@ namespace AncesTree
             // Union has a single child. Vertical from child unlikely to
             // connect to vertical from union. Draw a horizontal connector.
             if (minChildX == maxChildX)
-                _g.DrawLine(_border, minChildX, targetY, vertLx, targetY);
-
+                _g.DrawLine(_border, minChildX, targetY, startx, targetY);
         }
 
-        private bool drawDuplicateUnion(UnionNode union)
+        private void paintEdgesV(UnionNode parent)
+        {
+            Rectangle b1 = drawBounds(parent);
+
+            // spouse connector between boxes
+            int x = b1.Left + Math.Min(parent.P1.Wide, parent.P2.Wide) / 2;
+            int y = b1.Top + parent.P1.High;
+            _g.DrawLine(_border, x, y, x, y + UNION_BAR_WIDE);
+
+            // nothing further to do if this is a "duplicate" or there are no children
+            if (DrawDuplicateUnion(parent) || !hasChildren(parent))
+                return;
+
+            // Draw the connector from the spouse-line to the children-line
+            int horzLx = x;
+            int horzLy = y + UNION_BAR_WIDE / 2;
+            int targetX = b1.Left + b1.Width + (gapBetweenLevels / 2);
+            _g.DrawLine(_border, horzLx, horzLy, targetX, horzLy);
+
+            // determine top/bottom of children line
+            int minChildY = int.MaxValue;
+            int maxChildY = int.MinValue;
+
+            foreach (var child in getChildren(parent))
+            {
+                // Do not draw 'I'm a child' line for spouses
+                if (child is PersonNode && !((PersonNode)child).DrawVert)
+                    continue;
+
+                var b2 = drawBounds(child);
+                int childX = b2.Left;
+                int childY = b2.Top + child.ParentVertLocX;
+
+                minChildY = Math.Min(minChildY, childY);
+                maxChildY = Math.Max(maxChildY, childY);
+
+                // connector from child to child-line
+                _g.DrawLine(_border, childX, childY, targetX, childY);
+            }
+            // the child-line proper
+            _g.DrawLine(_border, targetX, minChildY, targetX, maxChildY);
+
+            // Union has a single child. Connector from child unlikely to
+            // match to connector from union. Draw an extra connector.
+            if (minChildY == maxChildY)
+                _g.DrawLine(_border, targetX, minChildY, targetX, horzLy);
+        }
+
+        private void paintEdgesH(UnionNode parent)
+        {
+            // Draw edge connectors associated with a Union. This is the horizontal
+            // (root at top) variant.
+
+            var b1 = drawBounds(parent);
+
+            // connector between spouse boxes
+            int y = b1.Top + (b1.Height / 2);
+            int x = b1.Left + parent.P1.Wide;
+            _g.DrawLine(_border, x, y, x + UNION_BAR_WIDE, y);
+
+            // if this is a duplicate, or there are no children, we're done
+            if (DrawDuplicateUnion(parent) || !hasChildren(parent))
+                return;
+
+            // Top point - vertical line from connector to child line
+            int vertLx = x + UNION_BAR_WIDE / 2;
+            int vertLy = y;
+
+            DrawChildrenEdgesH(parent, vertLx, vertLy);
+        }
+
+        private bool DrawDuplicateUnion(UnionNode union)
         {
             // Draw a connection between two, duplicated unions
 

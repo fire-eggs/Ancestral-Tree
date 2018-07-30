@@ -134,12 +134,14 @@ namespace AncesTree
             using (var majorFont = new Font("Times New Roman", 10)) // TODO configuration
             using (var minorFont = new Font("Times New Roman", 8))  // TODO configuration
             {
-                var tree = TreeBuild.BuildTree(treePanel1, majorFont, minorFont, val);
+                bool rootOnLeft = false; // false for root on top
+                var tree = TreeBuild.BuildTree(treePanel1, majorFont, minorFont, val, rootOnLeft);
 
                 double gapBetweenLevels = 30; // TODO configuration
                 double gapBetweenNodes = 20;  // TODO configuration
                 var configuration = new DefaultConfiguration<ITreeData>(
-                        gapBetweenLevels, gapBetweenNodes, Configuration<ITreeData>.Location.Top,
+                        gapBetweenLevels, gapBetweenNodes, 
+                        rootOnLeft ? Configuration<ITreeData>.Location.Left : Configuration<ITreeData>.Location.Top,
                         Configuration<ITreeData>.AlignmentInLevel.TowardsRoot);
 
                 // create the NodeExtentProvider for TextInBox nodes

@@ -14,9 +14,9 @@ namespace AncesTree.TreeModel
         private static DefaultTreeForTreeLayout<ITreeData> _tree;
         private static Dictionary<string, ITreeData> _unionSet;
 
-        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font1, Font font2, Person root)
+        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font1, Font font2, Person root, bool rootOnLeft)
         {
-            _nf = new NodeFactory(ctl, font1, font2);
+            _nf = new NodeFactory(ctl, font1, font2, rootOnLeft);
             _unionSet = new Dictionary<string, ITreeData>();
 
             ITreeData treeRoot;
