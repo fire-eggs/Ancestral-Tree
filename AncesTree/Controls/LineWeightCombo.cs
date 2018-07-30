@@ -25,7 +25,7 @@ namespace WindowsFormsApplication1
             this.Items.Add(3);
             this.Items.Add(4);
             this.Items.Add(5);
-            this.SelectedIndex = 0;
+            //this.SelectedIndex = 0;
         }
 
         protected override void OnDrawItem(DrawItemEventArgs e)

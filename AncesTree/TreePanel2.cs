@@ -41,10 +41,11 @@ namespace AncesTree
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin, _margin);
 
-            // TODO configuration x 3
-            using (_duplPen = new Pen(Color.CornflowerBlue) { DashStyle = DashStyle.Dash })
-            using (_multEdge = new Pen(Color.Coral) { DashStyle = DashStyle.Dash })
-            using (_border = new Pen(_config.NodeBorderColor, _config.NodeBorderWeight) {DashStyle = _config.NodeBorderStyle})
+            _duplPen = _config.DuplLine.GetPen();
+            _multEdge = _config.MMargLine.GetPen();
+            _border = _config.NodeBorder.GetPen();
+            _spousePen = _config.SpouseLine.GetPen();
+            _childPen = _config.ChildLine.GetPen();
             {
                 PaintEdges(GetTree().getRoot());
 
@@ -103,6 +104,10 @@ namespace AncesTree
         private Pen _multEdge;
 
         private Pen _duplPen;
+
+        private Pen _spousePen;
+
+        private Pen _childPen;
 
         #region TreeLayout Access/Helper functions
 
@@ -255,7 +260,7 @@ namespace AncesTree
             int targetY = b1.Bottom + (gapBetweenLevels / 2);
 
             // Vertical connector from start position to child-line
-            _g.DrawLine(_border, startx, starty, startx, targetY);
+            _g.DrawLine(_childPen, startx, starty, startx, targetY);
 
             // determine the left/right of the child-line
             int minChildX = int.MaxValue;
@@ -276,14 +281,14 @@ namespace AncesTree
                 maxChildX = Math.Max(maxChildX, childX);
 
                 // vertical line from top of child to half-way up to previous level
-                _g.DrawLine(_border, childX, childY, childX, targetY);
+                _g.DrawLine(_childPen, childX, childY, childX, targetY);
             }
-            _g.DrawLine(_border, minChildX, targetY, maxChildX, targetY);
+            _g.DrawLine(_childPen, minChildX, targetY, maxChildX, targetY);
 
             // Union has a single child. Vertical from child unlikely to
             // connect to vertical from union. Draw a horizontal connector.
             if (minChildX == maxChildX)
-                _g.DrawLine(_border, minChildX, targetY, startx, targetY);
+                _g.DrawLine(_childPen, minChildX, targetY, startx, targetY);
         }
 
         private void paintEdgesV(UnionNode parent)
@@ -293,7 +298,7 @@ namespace AncesTree
             // spouse connector between boxes
             int x = b1.Left + Math.Min(parent.P1.Wide, parent.P2.Wide) / 2;
             int y = b1.Top + parent.P1.High;
-            _g.DrawLine(_border, x, y, x, y + UNION_BAR_WIDE);
+            _g.DrawLine(_spousePen, x, y, x, y + UNION_BAR_WIDE);
 
             // nothing further to do if this is a "duplicate" or there are no children
             if (DrawDuplicateUnion(parent) || !hasChildren(parent))
@@ -303,7 +308,7 @@ namespace AncesTree
             int horzLx = x;
             int horzLy = y + UNION_BAR_WIDE / 2;
             int targetX = b1.Left + b1.Width + (gapBetweenLevels / 2);
-            _g.DrawLine(_border, horzLx, horzLy, targetX, horzLy);
+            _g.DrawLine(_childPen, horzLx, horzLy, targetX, horzLy);
 
             // determine top/bottom of children line
             int minChildY = int.MaxValue;
@@ -323,15 +328,15 @@ namespace AncesTree
                 maxChildY = Math.Max(maxChildY, childY);
 
                 // connector from child to child-line
-                _g.DrawLine(_border, childX, childY, targetX, childY);
+                _g.DrawLine(_childPen, childX, childY, targetX, childY);
             }
             // the child-line proper
-            _g.DrawLine(_border, targetX, minChildY, targetX, maxChildY);
+            _g.DrawLine(_childPen, targetX, minChildY, targetX, maxChildY);
 
             // Union has a single child. Connector from child unlikely to
             // match to connector from union. Draw an extra connector.
             if (minChildY == maxChildY)
-                _g.DrawLine(_border, targetX, minChildY, targetX, horzLy);
+                _g.DrawLine(_childPen, targetX, minChildY, targetX, horzLy);
         }
 
         private void paintEdgesH(UnionNode parent)
@@ -344,7 +349,7 @@ namespace AncesTree
             // connector between spouse boxes
             int y = b1.Top + (b1.Height / 2);
             int x = b1.Left + parent.P1.Wide;
-            _g.DrawLine(_border, x, y, x + UNION_BAR_WIDE, y);
+            _g.DrawLine(_spousePen, x, y, x + UNION_BAR_WIDE, y);
 
             // if this is a duplicate, or there are no children, we're done
             if (DrawDuplicateUnion(parent) || !hasChildren(parent))

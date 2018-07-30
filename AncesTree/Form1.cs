@@ -33,11 +33,6 @@ namespace AncesTree
             mnuMRU.MaxEntries = 7;
 
             LoadSettings(); // NOTE: must go after mnuMRU init
-
-            //DoubleBuffered = true;
-            //treePanel.Paint += treePanel_Paint;
-
-            //treePanel.BackColor = Color.Azure;
         }
 
         private void OnMRU(int number, string filename)
@@ -130,54 +125,17 @@ namespace AncesTree
 
         private void TreePerson(Person val)
         {
-            //_data2 = new DataSet(val);
-            //_data2.GetDescendants();
-            using (var majorFont = new Font("Times New Roman", 10)) // TODO configuration
-            using (var minorFont = new Font("Times New Roman", 8))  // TODO configuration
-            {
-                bool rootOnLeft = false; // false for root on top
+            // TODO read config from file
+            var config = TreeConfiguration.DefaultSettings();
+            var tree = TreeBuild.BuildTree(treePanel1, config, val);
 
-                int gapBetweenLevels = 30; // TODO configuration
-                int gapBetweenNodes = 20;  // TODO configuration
-                var config = new TreeConfiguration();
-                config.NodeGap = gapBetweenNodes;
-                config.GenerationGap = gapBetweenLevels;
-                config.Align = Configuration.AlignmentInLevel.TowardsRoot;
-                config.RootLoc = rootOnLeft ? Configuration.Location.Left : Configuration.Location.Top;
-                config.MajorFont = new Font("Times New Roman", 10);
-                config.MinorFont = new Font("Times New Roman", 8);
-                config.MaleColor = Color.PowderBlue;
-                config.FemaleColor = Color.Pink;
-                config.UnknownColor = Color.Plum;
-                config.NodeBorderColor = Color.Black;
-                config.NodeBorderStyle = DashStyle.Solid;
-                config.NodeBorderWeight = 1;
-                config.BackColor = Color.Bisque;
+            // create the NodeExtentProvider for TextInBox nodes
+            var nodeExtentProvider = new NodeExtents();
 
-                var tree = TreeBuild.BuildTree(treePanel1, config, val);
-
-                //var configuration = new DefaultConfiguration(
-                //        gapBetweenLevels, gapBetweenNodes, 
-                //        rootOnLeft ? Configuration.Location.Left : Configuration.Location.Top,
-                //        Configuration.AlignmentInLevel.TowardsRoot);
-
-                // create the NodeExtentProvider for TextInBox nodes
-                var nodeExtentProvider = new NodeExtents();
-
-                // create the layout
-                var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config);
-                treePanel1.Boxen = treeLayout;
-            }
+            // create the layout
+            var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config);
+            treePanel1.Boxen = treeLayout;
         }
-
-        //private void RebuildTree()
-        //{
-        //    toolTip1.SetToolTip(treePanel1, "");
-        //    //_tree2 = _data2.GetTree();
-        //    //TreeHelpers<UnionData>.CalculateNodePositions(_tree2);
-        //    //CalculateControlSize2();
-        //    treePanel1.Invalidate();
-        //}
 
         private void personSel_SelectedIndexChanged(object sender, EventArgs e)
         {

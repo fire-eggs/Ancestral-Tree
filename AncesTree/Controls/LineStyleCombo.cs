@@ -20,7 +20,7 @@ namespace WindowsFormsApplication1
             this.Items.Add(DashStyle.Dot);
             this.Items.Add(DashStyle.DashDot);
             this.Items.Add(DashStyle.DashDotDot);
-            this.SelectedIndex = 0;
+            //this.SelectedIndex = 0;
         }
 
         protected override void OnDrawItem(DrawItemEventArgs e)

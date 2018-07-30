@@ -68,6 +68,12 @@
     <Compile Include="Controls\LineWeightCombo.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PenStyle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PenStyle.Designer.cs">
+      <DependentUpon>PenStyle.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +102,9 @@
     <Compile Include="TreePanel2.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="Controls\PenStyle.resx">
+      <DependentUpon>PenStyle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

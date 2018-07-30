@@ -32,9 +32,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.lineStyleCombo1 = new WindowsFormsApplication1.LineStyleCombo();
-            this.lineWeightCombo1 = new WindowsFormsApplication1.LineWeightCombo();
-            this.button2 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
@@ -47,6 +44,16 @@
             this.btnFemaleColor = new AncesTree.Controls.ColorButton();
             this.btnUnknownColor = new AncesTree.Controls.ColorButton();
             this.btnBackColor = new AncesTree.Controls.ColorButton();
+            this.boxPen = new AncesTree.Controls.PenStyle();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.spousePen = new AncesTree.Controls.PenStyle();
+            this.childPen = new AncesTree.Controls.PenStyle();
+            this.mmargPen = new AncesTree.Controls.PenStyle();
+            this.duplLine = new AncesTree.Controls.PenStyle();
+            this.penStyle2 = new AncesTree.Controls.PenStyle();
             this.SuspendLayout();
             // 
             // treePanel21
@@ -81,43 +88,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 102);
+            this.label2.Location = new System.Drawing.Point(20, 102);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(64, 13);
             this.label2.TabIndex = 3;
             this.label2.Text = "Box Outline:";
-            // 
-            // lineStyleCombo1
-            // 
-            this.lineStyleCombo1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.lineStyleCombo1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lineStyleCombo1.FormattingEnabled = true;
-            this.lineStyleCombo1.Location = new System.Drawing.Point(116, 102);
-            this.lineStyleCombo1.Name = "lineStyleCombo1";
-            this.lineStyleCombo1.Size = new System.Drawing.Size(57, 21);
-            this.lineStyleCombo1.TabIndex = 4;
-            this.lineStyleCombo1.SelectedIndexChanged += new System.EventHandler(this.lineStyleCombo1_SelectedIndexChanged);
-            // 
-            // lineWeightCombo1
-            // 
-            this.lineWeightCombo1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.lineWeightCombo1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lineWeightCombo1.FormattingEnabled = true;
-            this.lineWeightCombo1.Location = new System.Drawing.Point(180, 102);
-            this.lineWeightCombo1.Name = "lineWeightCombo1";
-            this.lineWeightCombo1.Size = new System.Drawing.Size(52, 21);
-            this.lineWeightCombo1.TabIndex = 5;
-            this.lineWeightCombo1.SelectedIndexChanged += new System.EventHandler(this.lineWeightCombo1_SelectedIndexChanged);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(80, 102);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(30, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label3
             // 
@@ -159,7 +134,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 242);
+            this.label5.Location = new System.Drawing.Point(37, 261);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(60, 13);
             this.label5.TabIndex = 11;
@@ -168,7 +143,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(16, 277);
+            this.label6.Location = new System.Drawing.Point(26, 291);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(71, 13);
             this.label6.TabIndex = 12;
@@ -177,7 +152,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(19, 308);
+            this.label7.Location = new System.Drawing.Point(14, 322);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(83, 13);
             this.label7.TabIndex = 13;
@@ -186,7 +161,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(22, 339);
+            this.label8.Location = new System.Drawing.Point(35, 353);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(62, 13);
             this.label8.TabIndex = 14;
@@ -195,7 +170,7 @@
             // btnMaleColor
             // 
             this.btnMaleColor.BackColor = System.Drawing.SystemColors.Control;
-            this.btnMaleColor.Location = new System.Drawing.Point(106, 242);
+            this.btnMaleColor.Location = new System.Drawing.Point(103, 256);
             this.btnMaleColor.Name = "btnMaleColor";
             this.btnMaleColor.Size = new System.Drawing.Size(32, 23);
             this.btnMaleColor.TabIndex = 16;
@@ -206,7 +181,7 @@
             // btnFemaleColor
             // 
             this.btnFemaleColor.BackColor = System.Drawing.SystemColors.Control;
-            this.btnFemaleColor.Location = new System.Drawing.Point(106, 277);
+            this.btnFemaleColor.Location = new System.Drawing.Point(103, 286);
             this.btnFemaleColor.Name = "btnFemaleColor";
             this.btnFemaleColor.Size = new System.Drawing.Size(32, 23);
             this.btnFemaleColor.TabIndex = 17;
@@ -217,7 +192,7 @@
             // btnUnknownColor
             // 
             this.btnUnknownColor.BackColor = System.Drawing.SystemColors.Control;
-            this.btnUnknownColor.Location = new System.Drawing.Point(106, 308);
+            this.btnUnknownColor.Location = new System.Drawing.Point(103, 317);
             this.btnUnknownColor.Name = "btnUnknownColor";
             this.btnUnknownColor.Size = new System.Drawing.Size(32, 23);
             this.btnUnknownColor.TabIndex = 18;
@@ -228,7 +203,7 @@
             // btnBackColor
             // 
             this.btnBackColor.BackColor = System.Drawing.SystemColors.Control;
-            this.btnBackColor.Location = new System.Drawing.Point(106, 339);
+            this.btnBackColor.Location = new System.Drawing.Point(103, 348);
             this.btnBackColor.Name = "btnBackColor";
             this.btnBackColor.Size = new System.Drawing.Size(32, 23);
             this.btnBackColor.TabIndex = 19;
@@ -236,11 +211,109 @@
             this.btnBackColor.Value = System.Drawing.SystemColors.Control;
             this.btnBackColor.OnColorChange += new AncesTree.Controls.ColorButton.ColorChanged(this.OnColorChange);
             // 
+            // boxPen
+            // 
+            this.boxPen.LineColor = System.Drawing.SystemColors.Control;
+            this.boxPen.Location = new System.Drawing.Point(90, 92);
+            this.boxPen.Name = "boxPen";
+            this.boxPen.Size = new System.Drawing.Size(211, 31);
+            this.boxPen.TabIndex = 20;
+            this.boxPen.OnLineStyleChange += new AncesTree.Controls.PenStyle.LineStyleChanged(this.penStyle_OnLineStyleChange);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(15, 130);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(69, 13);
+            this.label9.TabIndex = 21;
+            this.label9.Text = "Spouse Line:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(28, 158);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(56, 13);
+            this.label10.TabIndex = 22;
+            this.label10.Text = "Child Line:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(9, 188);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(75, 13);
+            this.label11.TabIndex = 23;
+            this.label11.Text = "Multi-marriage:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(24, 214);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(60, 13);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "Duplicates:";
+            // 
+            // spousePen
+            // 
+            this.spousePen.LineColor = System.Drawing.SystemColors.Control;
+            this.spousePen.Location = new System.Drawing.Point(90, 120);
+            this.spousePen.Name = "spousePen";
+            this.spousePen.Size = new System.Drawing.Size(211, 31);
+            this.spousePen.TabIndex = 25;
+            this.spousePen.OnLineStyleChange += new AncesTree.Controls.PenStyle.LineStyleChanged(this.penStyle_OnLineStyleChange);
+            // 
+            // childPen
+            // 
+            this.childPen.LineColor = System.Drawing.SystemColors.Control;
+            this.childPen.Location = new System.Drawing.Point(90, 148);
+            this.childPen.Name = "childPen";
+            this.childPen.Size = new System.Drawing.Size(211, 31);
+            this.childPen.TabIndex = 26;
+            this.childPen.OnLineStyleChange += new AncesTree.Controls.PenStyle.LineStyleChanged(this.penStyle_OnLineStyleChange);
+            // 
+            // mmargPen
+            // 
+            this.mmargPen.LineColor = System.Drawing.SystemColors.Control;
+            this.mmargPen.Location = new System.Drawing.Point(90, 178);
+            this.mmargPen.Name = "mmargPen";
+            this.mmargPen.Size = new System.Drawing.Size(211, 31);
+            this.mmargPen.TabIndex = 27;
+            this.mmargPen.OnLineStyleChange += new AncesTree.Controls.PenStyle.LineStyleChanged(this.penStyle_OnLineStyleChange);
+            // 
+            // duplLine
+            // 
+            this.duplLine.LineColor = System.Drawing.SystemColors.Control;
+            this.duplLine.Location = new System.Drawing.Point(90, 204);
+            this.duplLine.Name = "duplLine";
+            this.duplLine.Size = new System.Drawing.Size(211, 31);
+            this.duplLine.TabIndex = 28;
+            this.duplLine.OnLineStyleChange += new AncesTree.Controls.PenStyle.LineStyleChanged(this.penStyle_OnLineStyleChange);
+            // 
+            // penStyle2
+            // 
+            this.penStyle2.LineColor = System.Drawing.SystemColors.Control;
+            this.penStyle2.Location = new System.Drawing.Point(90, 204);
+            this.penStyle2.Name = "penStyle2";
+            this.penStyle2.Size = new System.Drawing.Size(211, 31);
+            this.penStyle2.TabIndex = 28;
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(724, 464);
+            this.Controls.Add(this.duplLine);
+            this.Controls.Add(this.mmargPen);
+            this.Controls.Add(this.childPen);
+            this.Controls.Add(this.spousePen);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.boxPen);
             this.Controls.Add(this.btnBackColor);
             this.Controls.Add(this.btnUnknownColor);
             this.Controls.Add(this.btnFemaleColor);
@@ -253,9 +326,6 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.lineWeightCombo1);
-            this.Controls.Add(this.lineStyleCombo1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
@@ -273,9 +343,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
-        private WindowsFormsApplication1.LineStyleCombo lineStyleCombo1;
-        private WindowsFormsApplication1.LineWeightCombo lineWeightCombo1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button3;
@@ -288,5 +355,15 @@
         private Controls.ColorButton btnFemaleColor;
         private Controls.ColorButton btnUnknownColor;
         private Controls.ColorButton btnBackColor;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private Controls.PenStyle boxPen;
+        private Controls.PenStyle spousePen;
+        private Controls.PenStyle childPen;
+        private Controls.PenStyle mmargPen;
+        private Controls.PenStyle duplLine;
+        private Controls.PenStyle penStyle2;
     }
 }

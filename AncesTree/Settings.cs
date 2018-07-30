@@ -24,8 +24,6 @@ namespace AncesTree
         {
             _loadComplete = false;
             LoadSettings();
-            lineStyleCombo1.Init(); // TODO automate!
-            lineWeightCombo1.Init(); // TODO automate!
             _loadComplete = true;
             MakeTree();
         }
@@ -43,9 +41,38 @@ namespace AncesTree
             _settings.RootLoc = Configuration.Location.Top;
             _settings.Align = Configuration.AlignmentInLevel.TowardsRoot;
 
-            _settings.NodeBorderStyle = DashStyle.Solid;
-            _settings.NodeBorderWeight = 1;
-            _settings.NodeBorderColor = Color.Black;
+            _settings.NodeBorder = new LineStyleValues {
+                                                            LineColor = Color.Black,
+                                                            LineWeight = 1,
+                                                            LineStyle = DashStyle.Solid
+                                                        };
+            _settings.SpouseLine = new LineStyleValues {
+                                                            LineColor = Color.Black,
+                                                            LineWeight = 1,
+                                                            LineStyle = DashStyle.Solid
+                                                        };
+            _settings.ChildLine = new LineStyleValues {
+                                                            LineColor = Color.Black,
+                                                            LineWeight = 1,
+                                                            LineStyle = DashStyle.Solid
+                                                        };
+            _settings.MMargLine = new LineStyleValues
+            {
+                LineColor = Color.Coral,
+                LineWeight = 2,
+                LineStyle = DashStyle.Dash
+            };
+            _settings.DuplLine = new LineStyleValues
+            {
+                LineColor = Color.CornflowerBlue,
+                LineWeight = 2,
+                LineStyle = DashStyle.Dash
+            };
+            boxPen.Values = _settings.NodeBorder;
+            spousePen.Values = _settings.SpouseLine;
+            childPen.Values = _settings.ChildLine;
+            mmargPen.Values = _settings.MMargLine;
+            duplLine.Values = _settings.DuplLine;
 
             _settings.MajorFont = new Font("Times New Roman", 10);
             _settings.MinorFont = new Font("Times New Roman", 10);
@@ -76,12 +103,17 @@ namespace AncesTree
             Rebuild();
         }
 
+        private Person _patriarch;
+
         private void MakeTree()
         {
-            var ged = LoadGEDFromStream(gedcom);
-            var patriarch = ged.PersonById("I1");
+            if (_patriarch == null)
+            {
+                var ged = LoadGEDFromStream(gedcom);
+                _patriarch = ged.PersonById("I1");
+            }
 
-            var tree = TreeBuild.BuildTree(treePanel21, _settings, patriarch);
+            var tree = TreeBuild.BuildTree(treePanel21, _settings, _patriarch);
 
             var nodeExtentProvider = new NodeExtents();
             var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, _settings);
@@ -118,27 +150,6 @@ namespace AncesTree
             return f;
         }
 
-        private void lineStyleCombo1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_loadComplete) return;
-            _settings.NodeBorderStyle = (DashStyle) lineStyleCombo1.SelectedItem;
-            Rebuild();
-        }
-
-        private void lineWeightCombo1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_loadComplete) return;
-            _settings.NodeBorderWeight = (int)lineWeightCombo1.SelectedItem;
-            Rebuild();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            _settings.NodeBorderColor = doColor(_settings.NodeBorderColor);
-            button2.BackColor = _settings.NodeBorderColor;
-            Rebuild();
-        }
-
         private void Rebuild()
         {
             MakeTree();
@@ -162,20 +173,23 @@ namespace AncesTree
             return fontIn;
         }
 
-        private Color doColor(Color colorIn)
-        {
-            var dlg = new ColorDialog();
-            dlg.Color = colorIn;
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                return dlg.Color;
-            }
-            return colorIn;
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
             _settings.MinorFont = doFont(_settings.MinorFont);
+            Rebuild();
+        }
+
+        private void penStyle_OnLineStyleChange(PenStyle sender)
+        {
+            if (!_loadComplete)
+                return;
+            if (sender == boxPen)
+                _settings.NodeBorder = boxPen.Values;
+            if (sender == spousePen)
+                _settings.SpouseLine = spousePen.Values;
+            if (sender == childPen)
+                _settings.ChildLine = childPen.Values;
+
             Rebuild();
         }
     }
