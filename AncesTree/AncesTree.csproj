@@ -59,6 +59,9 @@
     <Compile Include="..\..\..\SharpGEDParse\DrawAnce\MruStripMenu.cs">
       <Link>MruStripMenu.cs</Link>
     </Compile>
+    <Compile Include="Controls\ColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\LineStyleCombo.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -90,9 +93,6 @@
     <Compile Include="TreeModel\TreeBuild.cs" />
     <Compile Include="TreeModel\TreeConfiguration.cs" />
     <Compile Include="TreeModel\TreeData.cs" />
-    <Compile Include="TreePanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="TreePanel2.cs">
       <SubType>Component</SubType>
     </Compile>

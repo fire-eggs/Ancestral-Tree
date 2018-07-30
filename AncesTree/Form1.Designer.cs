@@ -126,11 +126,9 @@
             // 
             this.treePanel1.BackColor = System.Drawing.Color.OldLace;
             this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.treePanel1.DrawFont = null;
             this.treePanel1.Location = new System.Drawing.Point(3, 3);
             this.treePanel1.Name = "treePanel1";
             this.treePanel1.Size = new System.Drawing.Size(643, 330);
-            this.treePanel1.SpouseFont = null;
             this.treePanel1.TabIndex = 0;
             this.treePanel1.TreeMargin = 10;
             this.treePanel1.Zoom = 1F;

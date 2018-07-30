@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using AncesTree.TreeLayout;
@@ -135,7 +136,6 @@ namespace AncesTree
             using (var minorFont = new Font("Times New Roman", 8))  // TODO configuration
             {
                 bool rootOnLeft = false; // false for root on top
-                var tree = TreeBuild.BuildTree(treePanel1, majorFont, minorFont, val, rootOnLeft);
 
                 int gapBetweenLevels = 30; // TODO configuration
                 int gapBetweenNodes = 20;  // TODO configuration
@@ -144,6 +144,17 @@ namespace AncesTree
                 config.GenerationGap = gapBetweenLevels;
                 config.Align = Configuration.AlignmentInLevel.TowardsRoot;
                 config.RootLoc = rootOnLeft ? Configuration.Location.Left : Configuration.Location.Top;
+                config.MajorFont = new Font("Times New Roman", 10);
+                config.MinorFont = new Font("Times New Roman", 8);
+                config.MaleColor = Color.PowderBlue;
+                config.FemaleColor = Color.Pink;
+                config.UnknownColor = Color.Plum;
+                config.NodeBorderColor = Color.Black;
+                config.NodeBorderStyle = DashStyle.Solid;
+                config.NodeBorderWeight = 1;
+                config.BackColor = Color.Bisque;
+
+                var tree = TreeBuild.BuildTree(treePanel1, config, val);
 
                 //var configuration = new DefaultConfiguration(
                 //        gapBetweenLevels, gapBetweenNodes, 
@@ -155,8 +166,6 @@ namespace AncesTree
 
                 // create the layout
                 var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config);
-                treePanel1.DrawFont = majorFont;
-                treePanel1.SpouseFont = minorFont;
                 treePanel1.Boxen = treeLayout;
             }
         }

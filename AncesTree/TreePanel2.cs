@@ -13,6 +13,8 @@ namespace AncesTree
 {
     public class TreePanel2 : Panel
     {
+        private TreeConfiguration _config;
+
         public TreePanel2()
         {
             BorderStyle = BorderStyle.FixedSingle;
@@ -31,17 +33,18 @@ namespace AncesTree
             //_g.SmoothingMode = SmoothingMode.AntiAlias;
             //_g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-            //g.Clear(Color.AntiqueWhite);
+            _config = _boxen.getConfiguration() as TreeConfiguration;
+            if (_config == null)
+                return;
 
+            g.Clear(_config.BackColor);
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin, _margin);
-
-            TreeConfiguration config = _boxen.getConfiguration() as TreeConfiguration;
 
             // TODO configuration x 3
             using (_duplPen = new Pen(Color.CornflowerBlue) { DashStyle = DashStyle.Dash })
             using (_multEdge = new Pen(Color.Coral) { DashStyle = DashStyle.Dash })
-            using (_border = new Pen(config.NodeBorderColor, config.NodeBorderWeight) {DashStyle = config.NodeBorderStyle})
+            using (_border = new Pen(_config.NodeBorderColor, _config.NodeBorderWeight) {DashStyle = _config.NodeBorderStyle})
             {
                 PaintEdges(GetTree().getRoot());
 
@@ -75,31 +78,6 @@ namespace AncesTree
         }
 
         private Graphics _g;
-
-        private Font _font;
-        private Font _font2;
-
-        public Font DrawFont  // TODO configuration
-        { 
-            get { return _font; }
-            set
-            {
-                if (value == null)
-                    return;
-                _font = (Font)(value.Clone());
-            } // TODO re-layout tree?
-        }
-        public Font SpouseFont  // TODO configuration
-        {
-            get { return _font2; }
-            set
-            {
-                if (value == null)
-                    return;
-                _font2 = (Font)(value.Clone());
-            } // TODO re-layout tree?
-        }
-
         private TreeLayout<ITreeData> _boxen;
 
         public TreeLayout<ITreeData> Boxen
@@ -157,7 +135,6 @@ namespace AncesTree
 
         #endregion
 
-        private readonly static Color BORDER_COLOR = Color.Gray; // TODO configuration
         private readonly static Color TEXT_COLOR = Color.Black; // TODO configuration
 
         private const int UNION_BAR_WIDE = 20; // TODO pull from configuration
@@ -206,7 +183,7 @@ namespace AncesTree
                 _g.FillRectangle(b, box);
             _g.DrawRectangle(_border, box);
             _g.DrawString(tib.Text, 
-                tib.DrawVert ? DrawFont : SpouseFont,
+                tib.DrawVert ? _config.MajorFont : _config.MinorFont,
                 new SolidBrush(TEXT_COLOR), box.X, box.Y);
         }
 

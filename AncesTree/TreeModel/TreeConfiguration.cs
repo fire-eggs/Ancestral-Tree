@@ -3,13 +3,10 @@ using System.Drawing.Drawing2D;
 
 namespace AncesTree.TreeModel
 {
-    class TreeConfiguration : DefaultConfiguration
+    public class TreeConfiguration : DefaultConfiguration
     {
-        public TreeConfiguration() : base (30, 20)
+        public TreeConfiguration() : base (0, 0)
         {
-            NodeBorderColor = Color.Black;
-            NodeBorderStyle = DashStyle.Solid;
-            NodeBorderWeight = 1;
         }
 
         public int GenerationGap
@@ -38,9 +35,18 @@ namespace AncesTree.TreeModel
 
         public int SpouseGap { get; set; }
 
+        public Font MajorFont { get; set; }
+        public Font MinorFont { get; set; }
+
 
         public Color NodeBorderColor { get; set; }
         public DashStyle NodeBorderStyle { get; set; }
         public int NodeBorderWeight { get; set; }
+
+        public Color MaleColor { get; set; }
+        public Color FemaleColor { get; set; }
+        public Color UnknownColor { get; set; }
+        public Color BackColor { get; set; }
+        public bool RootOnLeft { get { return RootLoc == Location.Left; } }
     }
 }

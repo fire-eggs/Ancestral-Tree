@@ -13,10 +13,12 @@ namespace AncesTree.TreeModel
         private static NodeFactory _nf;
         private static DefaultTreeForTreeLayout<ITreeData> _tree;
         private static Dictionary<string, ITreeData> _unionSet;
+        private static TreeConfiguration _config;
 
-        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font1, Font font2, Person root, bool rootOnLeft)
+        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, TreeConfiguration config, Person root)
         {
-            _nf = new NodeFactory(ctl, font1, font2, rootOnLeft);
+            _config = config;
+            _nf = new NodeFactory(ctl, _config.MajorFont, _config.MinorFont, _config.RootOnLeft);
             _unionSet = new Dictionary<string, ITreeData>();
 
             ITreeData treeRoot;
@@ -174,15 +176,15 @@ namespace AncesTree.TreeModel
         public static Color ColorForNode(Person who)
         {
             if (who == null)
-                return Color.Plum;
+                return _config.UnknownColor;
             switch (who.Sex)
             {
                 case "Male":
-                    return Color.PowderBlue;
+                    return _config.MaleColor;
                 case "Female":
-                    return Color.Pink;
+                    return _config.FemaleColor;
                 default:
-                    return Color.Plum;
+                    return _config.UnknownColor;
             }
         }
     }
