@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Point = System.Drawing.Point;
 
 namespace AncesTree
 {
@@ -21,12 +22,11 @@ namespace AncesTree
             Zoom = 1.0f;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        public void drawTree(Graphics g)
         {
-            base.OnPaint(e);
             if (_boxen == null)
                 return;
-            _g = e.Graphics;
+            _g = g;
 
             //_g.SmoothingMode = SmoothingMode.AntiAlias;
             //_g.TextRenderingHint = TextRenderingHint.AntiAlias;
@@ -34,8 +34,10 @@ namespace AncesTree
             //g.Clear(Color.AntiqueWhite);
 
             _g.ScaleTransform(_zoom, _zoom);
-            _g.TranslateTransform(_margin,_margin);
+            _g.TranslateTransform(_margin, _margin);
 
+            // TODO configuration x 3
+            using (_duplPen = new Pen(Color.CornflowerBlue) { DashStyle = DashStyle.Dash })
             using (_multEdge = new Pen(Color.Coral) { DashStyle = DashStyle.Dash })
             using (_border = new Pen(BORDER_COLOR))
             {
@@ -47,6 +49,12 @@ namespace AncesTree
                     paintNode(node);
                 }
             }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            drawTree(e.Graphics);
         }
 
         private int _margin = 10;
@@ -104,6 +112,8 @@ namespace AncesTree
 
         private Pen _multEdge;
 
+        private Pen _duplPen;
+
         #region TreeLayout Access/Helper functions
 
         private Rectangle drawBounds(ITreeData node)
@@ -149,7 +159,10 @@ namespace AncesTree
             PersonNode foo = node as PersonNode;
             if (foo != null)
             {
-                paintABox(foo, box);
+                if (foo.Text == " " && foo.Who == null)
+                    ; // fake for multi-marriage at root, don't draw
+                else
+                    paintABox(foo, box);
             }
             else
             {
@@ -180,7 +193,13 @@ namespace AncesTree
         private void PaintEdges(ITreeData parent)
         {
             if (parent is PersonNode)
-                paintEdges(parent as PersonNode);
+            {
+                var p = parent as PersonNode;
+                if (p.Who == null && p.Text == " ")
+                    ; // fake root for multi-marriage, don't draw!
+                else
+                    paintEdges(parent as PersonNode);
+            }
             else
                 paintEdges(parent as UnionNode);
             foreach (var child in getChildren(parent))
@@ -280,6 +299,9 @@ namespace AncesTree
             int x = (int)(b1.Left + parent.P1.Wide);
             _g.DrawLine(_border, x, y, x + UNION_BAR_WIDE, y);
 
+            if (drawDuplicateUnion(parent))
+                return;
+
             // union has no children, we're done
             if (!hasChildren(parent))
                 return;
@@ -322,6 +344,39 @@ namespace AncesTree
             if (minChildX == maxChildX)
                 _g.DrawLine(_border, minChildX, targetY, vertLx, targetY);
 
+        }
+
+        private bool drawDuplicateUnion(UnionNode union)
+        {
+            // Draw a connection between two, duplicated unions
+
+            // This is not a duplicate, nothing to do
+            if (union.DupNode == null)
+                return false;
+
+            var thisRect = drawBounds(union);
+            var destRect = drawBounds(union.DupNode);
+
+            thisRect.Inflate(1, 1); // TODO need to use the pen thickness
+            destRect.Inflate(1, 1); // TODO need to use the pen thickness
+
+            int midXDest = destRect.Left + (destRect.Right - destRect.Left) / 2;
+            int midXthis = thisRect.Left + (thisRect.Right - thisRect.Left) / 2;
+            int midmidX = midXDest + (midXthis - midXDest) / 2;
+
+            int midY = Math.Max(thisRect.Bottom, destRect.Bottom) + (gapBetweenLevels / 2) - 5; // TODO tweak/make constant
+
+            Point p1 = new Point(midXthis, thisRect.Bottom);
+            Point p2 = new Point(midmidX, midY);
+            Point p3 = new Point(midXDest, destRect.Bottom);
+
+            _g.DrawRectangle(_duplPen, thisRect);
+            _g.DrawRectangle(_duplPen, destRect);
+
+            // TODO p2 might be below the bottom of the panel.
+            // TODO consider drawing from left edge of 'this' to right edge of 'dest'
+            _g.DrawCurve(_duplPen, new[] { p1, p2, p3 });
+            return true;
         }
 
     }

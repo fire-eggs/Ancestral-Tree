@@ -709,17 +709,15 @@ namespace AncesTree.TreeLayout
                 }
                 executeShifts(v);
 
-                double midpoint0 = (getPrelim(tree.getFirstChild(v)) + getPrelim(tree.getLastChild(v))) / 2.0;
-
+                // KBR extension - for multi-marriage, spouses have been
+                // created as 'pseudo' children of the parent. The parent
+                // should only be centered above its 'real' children.
                 double midpoint = (getPrelim(tree.getFirstRealChild(v)) + getPrelim(tree.getLastRealChild(v))) / 2.0;
-
-                Console.WriteLine("Mid0:{0} Mid1:{1}", midpoint0, midpoint);
 
                 TreeNode w = leftSibling;
                 if (w != null)
                 {
                     // v has left sibling
-
                     setPrelim(v, getPrelim(w) + getDistance(v, w));
                     setMod(v, getPrelim(v) - midpoint);
 
@@ -727,7 +725,6 @@ namespace AncesTree.TreeLayout
                 else
                 {
                     // v has no left sibling
-
                     setPrelim(v, midpoint);
                 }
             }

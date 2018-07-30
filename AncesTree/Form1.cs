@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using AncesTree.TreeLayout;
 using AncesTree.TreeModel;
@@ -261,7 +262,14 @@ namespace AncesTree
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
+            using (Bitmap b = new Bitmap(treePanel1.Width, treePanel1.Height))
+            {
+                using (Graphics g = Graphics.FromImage(b))
+                {
+                    treePanel1.drawTree(g);
+                }
+                b.Save(@"e:\ancestree.png", ImageFormat.Png);
+            }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

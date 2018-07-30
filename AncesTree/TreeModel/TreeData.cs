@@ -39,6 +39,9 @@ namespace AncesTree.TreeModel
             IsReal = true;
         }
 
+        // In the multi-marriage case, this person might have a duplicate elsewhere
+        public ITreeData DupNode { get; set; }
+
         // Drawing properties
         public string Text { get; set; }
 
@@ -94,11 +97,16 @@ namespace AncesTree.TreeModel
 
         public PersonNode P2 { get; set; }
 
-        public UnionNode(PersonNode p1, PersonNode p2)
+        public string UnionId { get; set; }
+
+        public ITreeData DupNode { get; set; }
+
+        public UnionNode(PersonNode p1, PersonNode p2, string unionId)
         {
             IsReal = true;
             P1 = p1;
             P2 = p2;
+            UnionId = unionId;
         }
 
     }
@@ -130,8 +138,8 @@ namespace AncesTree.TreeModel
                 1000, StringFormat.GenericDefault);
                 //StringFormat.GenericTypographic);
 
-            int w = (int) (txtSz.Width); //+ 9); // TODO why so much extra required?
-            int h = (int) (txtSz.Height);// + 2);
+            int w = (int) (txtSz.Width + 1);
+            int h = (int) (txtSz.Height);
             var node = new PersonNode(p, s, w, h);
             node.BackColor = clr;
             node.DrawVert = !isSpouse; // TODO brother/sister incest: both spouses are children
@@ -139,11 +147,11 @@ namespace AncesTree.TreeModel
             return node;
         }
 
-        public ITreeData Create(ITreeData p1, ITreeData p2)
+        public ITreeData Create(ITreeData p1, ITreeData p2, string unionId)
         {
             var p1A = (PersonNode) p1;
             var p2A = (PersonNode) p2;
-            var node = new UnionNode(p1A, p2A);
+            var node = new UnionNode(p1A, p2A, unionId);
             p1A.IsReal = p1A.DrawVert;  // TODO brother/sister incest: both spouses are children
             p2A.IsReal = p2A.DrawVert;
             return node;

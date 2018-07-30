@@ -1,4 +1,5 @@
-﻿using AncesTree.TreeLayout;
+﻿using System.Collections.Generic;
+using AncesTree.TreeLayout;
 using GEDWrap;
 using System;
 using System.Drawing;
@@ -11,14 +12,29 @@ namespace AncesTree.TreeModel
     {
         private static NodeFactory _nf;
         private static DefaultTreeForTreeLayout<ITreeData> _tree;
+        private static Dictionary<string, ITreeData> _unionSet;
 
         public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font1, Font font2, Person root)
         {
             _nf = new NodeFactory(ctl, font1, font2);
+            _unionSet = new Dictionary<string, ITreeData>();
 
-            var rootN = MakeNode(root);  // TODO multi-marriage at root
-            _tree = new DefaultTreeForTreeLayout<ITreeData>(rootN);
-            GrowTree(rootN as UnionNode);
+            ITreeData treeRoot;
+            switch (root.SpouseIn.Count)
+            {
+                case 0:
+                case 1:
+                    treeRoot = MakeNode(root);
+                    _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
+                    GrowTree(treeRoot as UnionNode);
+                    break;
+                default:
+                    // Multi-marriage at the root.
+                    treeRoot = _nf.Create(null, " ", Color.GreenYellow);
+                    _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
+                    MultiMarriage(treeRoot, root);
+                    break;
+            }
             return _tree;
         }
 
@@ -42,7 +58,7 @@ namespace AncesTree.TreeModel
                 ColorForNode(marr.Husband), marr.Husband == null || marr.Husband.Id != who.Id);
             var p2 = _nf.Create(marr.Wife, StringForNode(marr.Wife), 
                 ColorForNode(marr.Wife), marr.Wife == null || marr.Wife.Id != who.Id);
-            return _nf.Create(p1, p2);
+            return _nf.Create(p1, p2, marr.Id);
         }
 
         private static void GrowTree(UnionNode parent)
@@ -53,6 +69,18 @@ namespace AncesTree.TreeModel
             var who = parent.P1.Who ?? parent.P2.Who;
             if (who == null)
                 return;
+
+            // This union might have already been added to the
+            // tree. If so, provide a link to the previous node,
+            // and do NOT add children.
+            ITreeData dup;
+            if (_unionSet.TryGetValue(parent.UnionId, out dup))
+            {
+                parent.DupNode = dup;
+                return;
+            }
+
+            _unionSet.Add(parent.UnionId, parent);
 
             Union marr = who.SpouseIn.First();
             foreach (var child in marr.Childs)
@@ -87,12 +115,25 @@ namespace AncesTree.TreeModel
             foreach (var marr in who.SpouseIn)
             {
                 Person spouseP = marr.Spouse(who);
-                ITreeData node = _nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
+                PersonNode node = (PersonNode)_nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
                 node.IsReal = false;
                 nodeP.AddSpouse(node);
                 _tree.addChild(parent, node);
 
-                GrowTree(node, marr);
+                // This union might have already been added to the
+                // tree. If so, provide a link to the previous node,
+                // and do NOT add children.
+                ITreeData dup;
+                if (_unionSet.TryGetValue(marr.Id, out dup))
+                {
+                    nodeP.DupNode = dup;
+                    node.DupNode = dup;
+                }
+                else
+                {
+                    _unionSet.Add(marr.Id, nodeP);
+                    GrowTree(node, marr);
+                }
             }
         }
 
