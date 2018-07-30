@@ -12,7 +12,7 @@ namespace AncesTree.TreeModel
      * 
      * @param <TreeNode> Type of elements used as nodes in the tree
      */
-    public class DefaultConfiguration<TreeNode> : Configuration<TreeNode>
+    public class DefaultConfiguration : Configuration
     {
 
         /**
@@ -72,7 +72,7 @@ namespace AncesTree.TreeModel
         // -----------------------------------------------------------------------
         // gapBetweenLevels
 
-        private readonly double gapBetweenLevels;
+        protected double gapBetweenLevels;
 
 
         public override double getGapBetweenLevels(int nextLevel)
@@ -83,10 +83,10 @@ namespace AncesTree.TreeModel
         // -----------------------------------------------------------------------
         // gapBetweenNodes
 
-        private readonly double gapBetweenNodes;
+        protected double gapBetweenNodes;
 
 
-        public override double getGapBetweenNodes(TreeNode node1, TreeNode node2)
+        public override double getGapBetweenNodes() //(TreeNode node1, TreeNode node2)
         {
             return gapBetweenNodes;
         }
@@ -94,7 +94,7 @@ namespace AncesTree.TreeModel
         // -----------------------------------------------------------------------
         // location
 
-        private readonly Location location;
+        protected Location location;
 
 
         public override Location getRootLocation()
@@ -105,7 +105,7 @@ namespace AncesTree.TreeModel
         // -----------------------------------------------------------------------
         // alignmentInLevel
 
-        private AlignmentInLevel alignmentInLevel;
+        protected AlignmentInLevel alignmentInLevel;
 
 
         public override AlignmentInLevel getAlignmentInLevel()

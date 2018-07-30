@@ -37,6 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.personSel = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.treePanel1 = new AncesTree.TreePanel2();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnZoomIn = new System.Windows.Forms.Button();
             this.btnZoomOut = new System.Windows.Forms.Button();
@@ -44,7 +45,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.treePanel1 = new AncesTree.TreePanel2();
+            this.button2 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -121,18 +122,31 @@
             this.flowLayoutPanel1.TabIndex = 3;
             this.flowLayoutPanel1.WrapContents = false;
             // 
+            // treePanel1
+            // 
+            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
+            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.treePanel1.DrawFont = null;
+            this.treePanel1.Location = new System.Drawing.Point(3, 3);
+            this.treePanel1.Name = "treePanel1";
+            this.treePanel1.Size = new System.Drawing.Size(643, 330);
+            this.treePanel1.SpouseFont = null;
+            this.treePanel1.TabIndex = 0;
+            this.treePanel1.TreeMargin = 10;
+            this.treePanel1.Zoom = 1F;
+            // 
             // flowLayoutPanel2
             // 
-            this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.Controls.Add(this.label1);
             this.flowLayoutPanel2.Controls.Add(this.personSel);
             this.flowLayoutPanel2.Controls.Add(this.btnZoomIn);
             this.flowLayoutPanel2.Controls.Add(this.btnZoomOut);
             this.flowLayoutPanel2.Controls.Add(this.btn100Percent);
             this.flowLayoutPanel2.Controls.Add(this.button1);
+            this.flowLayoutPanel2.Controls.Add(this.button2);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(515, 29);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(594, 29);
             this.flowLayoutPanel2.TabIndex = 2;
             this.flowLayoutPanel2.WrapContents = false;
             // 
@@ -193,14 +207,15 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // treePanel1
+            // button2
             // 
-            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
-            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.treePanel1.Location = new System.Drawing.Point(3, 3);
-            this.treePanel1.Name = "treePanel1";
-            this.treePanel1.Size = new System.Drawing.Size(643, 330);
-            this.treePanel1.TabIndex = 0;
+            this.button2.Location = new System.Drawing.Point(518, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 6;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
@@ -222,7 +237,6 @@
             this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,6 +260,7 @@
         private System.Windows.Forms.Button btn100Percent;
         private System.Windows.Forms.Button button1;
         private TreePanel2 treePanel1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

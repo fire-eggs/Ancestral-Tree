@@ -121,29 +121,29 @@ namespace AncesTree.TreeLayout
         // ------------------------------------------------------------------------
         // configuration
 
-        private readonly Configuration<TreeNode> configuration;
+        private readonly Configuration configuration;
 
         /**
          * Returns the Configuration used by this {@link TreeLayout}.
          * 
          * @return the Configuration used by this {@link TreeLayout}
          */
-        public Configuration<TreeNode> getConfiguration()
+        public Configuration getConfiguration()
         {
             return configuration;
         }
 
         private bool isLevelChangeInYAxis()
         {
-            Configuration<TreeNode>.Location rootLocation = configuration.getRootLocation();
-            return rootLocation == Configuration<TreeNode>.Location.Top || rootLocation == Configuration<TreeNode>.Location.Bottom;
+            Configuration.Location rootLocation = configuration.getRootLocation();
+            return rootLocation == Configuration.Location.Top || rootLocation == Configuration.Location.Bottom;
         }
 
         private int getLevelChangeSign()
         {
-            Configuration<TreeNode>.Location rootLocation = configuration.getRootLocation();
-            return rootLocation == Configuration<TreeNode>.Location.Bottom
-                    || rootLocation == Configuration<TreeNode>.Location.Right ? -1 : 1;
+            Configuration.Location rootLocation = configuration.getRootLocation();
+            return rootLocation == Configuration.Location.Bottom
+                    || rootLocation == Configuration.Location.Right ? -1 : 1;
         }
 
         // ------------------------------------------------------------------------
@@ -462,8 +462,8 @@ namespace AncesTree.TreeLayout
         {
             double sizeOfNodes = getNodeSize(v) + getNodeSize(w);
 
-            double distance = sizeOfNodes / 2
-                    + configuration.getGapBetweenNodes(v, w);
+            double distance = sizeOfNodes/2
+                              + configuration.getGapBetweenNodes(); //(v, w);
             return distance;
         }
 
@@ -752,12 +752,12 @@ namespace AncesTree.TreeLayout
             double x = getPrelim(v) + m;
 
             double y;
-            Configuration<TreeNode>.AlignmentInLevel alignment = configuration.getAlignmentInLevel();
-            if (alignment == Configuration<TreeNode>.AlignmentInLevel.Center)
+            Configuration.AlignmentInLevel alignment = configuration.getAlignmentInLevel();
+            if (alignment == Configuration.AlignmentInLevel.Center)
             {
                 y = levelStart + levelChangeSign * (levelSize / 2);
             }
-            else if (alignment == Configuration<TreeNode>.AlignmentInLevel.TowardsRoot)
+            else if (alignment == Configuration.AlignmentInLevel.TowardsRoot)
             {
                 y = levelStart + levelChangeSign * (getNodeThickness(v) / 2);
             }
@@ -844,7 +844,7 @@ namespace AncesTree.TreeLayout
          */
         public TreeLayout(TreeForTreeLayout<TreeNode> tree,
                 NodeExtentProvider<TreeNode> nodeExtentProvider,
-                Configuration<TreeNode> configuration, bool useIdentity)
+                Configuration configuration, bool useIdentity)
         {
             this.tree = tree;
             this.nodeExtentProvider = nodeExtentProvider;
@@ -887,7 +887,7 @@ namespace AncesTree.TreeLayout
 
         public TreeLayout(TreeForTreeLayout<TreeNode> tree,
                 NodeExtentProvider<TreeNode> nodeExtentProvider,
-                Configuration<TreeNode> configuration) : this(tree, nodeExtentProvider, configuration, false)
+                Configuration configuration) : this(tree, nodeExtentProvider, configuration, false)
         {
 
         }

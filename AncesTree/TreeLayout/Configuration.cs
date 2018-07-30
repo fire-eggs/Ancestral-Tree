@@ -9,7 +9,7 @@
      * 
      * @param <TreeNode> Type of elements used as nodes in the tree
      */
-    public abstract class Configuration<TreeNode>
+    public abstract class Configuration
     {
 
         // ------------------------------------------------------------------------
@@ -143,6 +143,6 @@
          * @param node2 &nbsp;
          * @return the minimal size of the gap between node1 and node2 [result &gt;= 0]
          */
-        public abstract double getGapBetweenNodes(TreeNode node1, TreeNode node2);
+        public abstract double getGapBetweenNodes(); //(TreeNode node1, TreeNode node2);
     }
 }

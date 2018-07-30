@@ -59,6 +59,18 @@
     <Compile Include="..\..\..\SharpGEDParse\DrawAnce\MruStripMenu.cs">
       <Link>MruStripMenu.cs</Link>
     </Compile>
+    <Compile Include="Controls\LineStyleCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LineWeightCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </Compile>
     <Compile Include="TreeLayout\AbstractTreeForTreeLayout.cs" />
     <Compile Include="TreeLayout\Configuration.cs" />
     <Compile Include="Form1.cs">
@@ -76,6 +88,7 @@
     <Compile Include="TreeModel\DefaultTreeForTreeLayout.cs" />
     <Compile Include="TreeModel\NodeExtents.cs" />
     <Compile Include="TreeModel\TreeBuild.cs" />
+    <Compile Include="TreeModel\TreeConfiguration.cs" />
     <Compile Include="TreeModel\TreeData.cs" />
     <Compile Include="TreePanel.cs">
       <SubType>Component</SubType>
@@ -96,6 +109,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

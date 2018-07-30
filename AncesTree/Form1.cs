@@ -137,18 +137,24 @@ namespace AncesTree
                 bool rootOnLeft = false; // false for root on top
                 var tree = TreeBuild.BuildTree(treePanel1, majorFont, minorFont, val, rootOnLeft);
 
-                double gapBetweenLevels = 30; // TODO configuration
-                double gapBetweenNodes = 20;  // TODO configuration
-                var configuration = new DefaultConfiguration<ITreeData>(
-                        gapBetweenLevels, gapBetweenNodes, 
-                        rootOnLeft ? Configuration<ITreeData>.Location.Left : Configuration<ITreeData>.Location.Top,
-                        Configuration<ITreeData>.AlignmentInLevel.TowardsRoot);
+                int gapBetweenLevels = 30; // TODO configuration
+                int gapBetweenNodes = 20;  // TODO configuration
+                var config = new TreeConfiguration();
+                config.NodeGap = gapBetweenNodes;
+                config.GenerationGap = gapBetweenLevels;
+                config.Align = Configuration.AlignmentInLevel.TowardsRoot;
+                config.RootLoc = rootOnLeft ? Configuration.Location.Left : Configuration.Location.Top;
+
+                //var configuration = new DefaultConfiguration(
+                //        gapBetweenLevels, gapBetweenNodes, 
+                //        rootOnLeft ? Configuration.Location.Left : Configuration.Location.Top,
+                //        Configuration.AlignmentInLevel.TowardsRoot);
 
                 // create the NodeExtentProvider for TextInBox nodes
                 var nodeExtentProvider = new NodeExtents();
 
                 // create the layout
-                var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, configuration);
+                var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config);
                 treePanel1.DrawFont = majorFont;
                 treePanel1.SpouseFont = minorFont;
                 treePanel1.Boxen = treeLayout;
@@ -277,6 +283,13 @@ namespace AncesTree
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Settings dlg = new Settings();
+            dlg.Owner = this;
+            dlg.ShowDialog();
         }
     }
 }

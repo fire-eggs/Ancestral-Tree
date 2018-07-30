@@ -36,10 +36,12 @@ namespace AncesTree
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin, _margin);
 
+            TreeConfiguration config = _boxen.getConfiguration() as TreeConfiguration;
+
             // TODO configuration x 3
             using (_duplPen = new Pen(Color.CornflowerBlue) { DashStyle = DashStyle.Dash })
             using (_multEdge = new Pen(Color.Coral) { DashStyle = DashStyle.Dash })
-            using (_border = new Pen(BORDER_COLOR))
+            using (_border = new Pen(config.NodeBorderColor, config.NodeBorderWeight) {DashStyle = config.NodeBorderStyle})
             {
                 PaintEdges(GetTree().getRoot());
 
@@ -80,12 +82,22 @@ namespace AncesTree
         public Font DrawFont  // TODO configuration
         { 
             get { return _font; }
-            set { _font = (Font)(value.Clone()); } // TODO re-layout tree?
+            set
+            {
+                if (value == null)
+                    return;
+                _font = (Font)(value.Clone());
+            } // TODO re-layout tree?
         }
         public Font SpouseFont  // TODO configuration
         {
             get { return _font2; }
-            set { _font2 = (Font)(value.Clone()); } // TODO re-layout tree?
+            set
+            {
+                if (value == null)
+                    return;
+                _font2 = (Font)(value.Clone());
+            } // TODO re-layout tree?
         }
 
         private TreeLayout<ITreeData> _boxen;
