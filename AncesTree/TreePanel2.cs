@@ -36,6 +36,7 @@ namespace AncesTree
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin,_margin);
 
+            using (_multEdge = new Pen(Color.Coral) { DashStyle = DashStyle.Dash })
             using (_border = new Pen(BORDER_COLOR))
             {
                 PaintEdges(GetTree().getRoot());
@@ -66,11 +67,17 @@ namespace AncesTree
         private Graphics _g;
 
         private Font _font;
+        private Font _font2;
 
-        public Font DrawFont 
+        public Font DrawFont  // TODO configuration
         { 
             get { return _font; }
-            set { _font = (Font)(value.Clone()); }
+            set { _font = (Font)(value.Clone()); } // TODO re-layout tree?
+        }
+        public Font SpouseFont  // TODO configuration
+        {
+            get { return _font2; }
+            set { _font2 = (Font)(value.Clone()); } // TODO re-layout tree?
         }
 
         private TreeLayout<ITreeData> _boxen;
@@ -82,6 +89,8 @@ namespace AncesTree
 
         private void ResizeMe()
         {
+            // Tree or scale changed. Update control size to fit.
+
             if (_boxen == null)
                 return;
             var newSize = _boxen.getBounds();
@@ -92,6 +101,8 @@ namespace AncesTree
         }
 
         private Pen _border;
+
+        private Pen _multEdge;
 
         #region TreeLayout Access/Helper functions
 
@@ -124,8 +135,8 @@ namespace AncesTree
 
         #endregion
 
-        private readonly static Color BORDER_COLOR = Color.Gray;
-        private readonly static Color TEXT_COLOR = Color.Black;
+        private readonly static Color BORDER_COLOR = Color.Gray; // TODO configuration
+        private readonly static Color TEXT_COLOR = Color.Black; // TODO configuration
 
         private const int UNION_BAR_WIDE = 20; // TODO pull from configuration
 
@@ -161,7 +172,9 @@ namespace AncesTree
             using (Brush b = new SolidBrush(tib.BackColor))
                 _g.FillRectangle(b, box);
             _g.DrawRectangle(_border, box);
-            _g.DrawString(tib.Text, DrawFont, new SolidBrush(TEXT_COLOR), box.X, box.Y);
+            _g.DrawString(tib.Text, 
+                tib.DrawVert ? DrawFont : SpouseFont,
+                new SolidBrush(TEXT_COLOR), box.X, box.Y);
         }
 
         private void PaintEdges(ITreeData parent)
@@ -178,11 +191,32 @@ namespace AncesTree
 
         private void paintEdges(PersonNode parent)
         {
-            if (GetTree().isLeaf(parent))
-                return;
-
             Rect b1 = getBoundsOfNode(parent);
 
+            // Spouse connectors in a multi-marriage case.
+            // All spouses have been drawn to the right of 
+            // this node.
+            if (parent.HasSpouses)
+            {
+                int leftX = (int)b1.Right;
+                int leftY = (int) (b1.Top + b1.Height/2);
+                foreach (var node in parent.Spouses)
+                {
+                    Rect b3 = getBoundsOfNode(node);
+                    int rightX = (int) b3.Left;
+
+                    // TODO consider drawing distinct line for each?
+                    _g.DrawLine(_multEdge, leftX, leftY, rightX, leftY);
+                }
+            }
+
+            if (GetTree().isLeaf(parent)) // No children, nothing further to do
+                return;
+
+            // Children connectors. Used when PersonNode represents
+            // a spouse in a multi-marriage.
+
+            // TODO refactor common code
             // center-bottom of parent
             int parentX = (int)(b1.Left + b1.Width / 2);
             int parentY = (int)(b1.Bottom);
@@ -205,7 +239,7 @@ namespace AncesTree
 
                 Rect b2 = getBoundsOfNode(child);
                 //int childX = (int) (b2.Left + b2.Width/2);
-                int childX = (int)b2.Left + child.CenterX;
+                int childX = (int)b2.Left + child.ParentVertLocX;
                 int childY = (int)(b2.Top);
 
                 minChildX = Math.Min(minChildX, childX);
@@ -221,13 +255,24 @@ namespace AncesTree
             }
             catch (Exception)
             {
+                // TODO why?
             }
 
+            // Union has a single child. Vertical from child unlikely to
+            // connect to vertical from union. Draw a horizontal connector.
+            if (minChildX == maxChildX)
+                _g.DrawLine(_border, minChildX, targetY, parentX, targetY);
 
         }
 
         private void paintEdges(UnionNode parent)
         {
+            // Draw any connectors associated with a Union.
+            // a. Connector between spouse boxes
+            // b. Drop line from connector to child horz. line
+            // c. Child horz. line
+            // d. Vertical line from each child to child horz. line
+
             Rect b1 = getBoundsOfNode(parent);
 
             // horz connector between spouse boxes
@@ -261,7 +306,7 @@ namespace AncesTree
 
                 Rect b2 = getBoundsOfNode(child);
                 //int childX = (int) (b2.Left + b2.Width/2);
-                int childX = (int)b2.Left + child.CenterX;
+                int childX = (int)b2.Left + child.ParentVertLocX;
                 int childY = (int)(b2.Top);
 
                 minChildX = Math.Min(minChildX, childX);

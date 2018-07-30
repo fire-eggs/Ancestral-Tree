@@ -130,12 +130,13 @@ namespace AncesTree
         {
             //_data2 = new DataSet(val);
             //_data2.GetDescendants();
-            using (var treeFont = new Font("Times New Roman", 10))
+            using (var majorFont = new Font("Times New Roman", 10)) // TODO configuration
+            using (var minorFont = new Font("Times New Roman", 8))  // TODO configuration
             {
-                var tree = TreeBuild.BuildTree(treePanel1, treeFont, val); // TODO panel
+                var tree = TreeBuild.BuildTree(treePanel1, majorFont, minorFont, val);
 
-                double gapBetweenLevels = 30;
-                double gapBetweenNodes = 20;
+                double gapBetweenLevels = 30; // TODO configuration
+                double gapBetweenNodes = 20;  // TODO configuration
                 var configuration = new DefaultConfiguration<ITreeData>(
                         gapBetweenLevels, gapBetweenNodes, Configuration<ITreeData>.Location.Top,
                         Configuration<ITreeData>.AlignmentInLevel.TowardsRoot);
@@ -145,7 +146,8 @@ namespace AncesTree
 
                 // create the layout
                 var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, configuration);
-                treePanel1.DrawFont = treeFont;
+                treePanel1.DrawFont = majorFont;
+                treePanel1.SpouseFont = minorFont;
                 treePanel1.Boxen = treeLayout;
             }
         }

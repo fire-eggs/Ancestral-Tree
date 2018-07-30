@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using AncesTree.TreeLayout;
+using GEDWrap;
+using System;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using AncesTree.TreeLayout;
-using GEDWrap;
 
 namespace AncesTree.TreeModel
 {
@@ -16,9 +12,9 @@ namespace AncesTree.TreeModel
         private static NodeFactory _nf;
         private static DefaultTreeForTreeLayout<ITreeData> _tree;
 
-        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font, Person root)
+        public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, Font font1, Font font2, Person root)
         {
-            _nf = new NodeFactory(ctl, font);
+            _nf = new NodeFactory(ctl, font1, font2);
 
             var rootN = MakeNode(root);  // TODO multi-marriage at root
             _tree = new DefaultTreeForTreeLayout<ITreeData>(rootN);
@@ -82,18 +78,19 @@ namespace AncesTree.TreeModel
             // 1. Make the person a child of the parent.
             // 2. For each marriage:
             // 2a. Add the spouse as a not-real child of the parent.
-            // 2b. call GrowTree(spouse, marriage)
+            // 2b. Connect each spouse to the person for drawing.
+            // 2c. call GrowTree(spouse, marriage)
 
-            ITreeData node = _nf.Create(who, StringForNode(who), ColorForNode(who));
-            _tree.addChild(parent, node);
+            PersonNode nodeP = (PersonNode)_nf.Create(who, StringForNode(who), ColorForNode(who));
+            _tree.addChild(parent, nodeP);
 
             foreach (var marr in who.SpouseIn)
             {
                 Person spouseP = marr.Spouse(who);
-                node = _nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
+                ITreeData node = _nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
                 node.IsReal = false;
+                nodeP.AddSpouse(node);
                 _tree.addChild(parent, node);
-                Debug.Assert(node.IsReal == false);
 
                 GrowTree(node, marr);
             }
@@ -136,7 +133,7 @@ namespace AncesTree.TreeModel
         public static Color ColorForNode(Person who)
         {
             if (who == null)
-                return Color.MediumOrchid;
+                return Color.Plum;
             switch (who.Sex)
             {
                 case "Male":
@@ -144,7 +141,7 @@ namespace AncesTree.TreeModel
                 case "Female":
                     return Color.Pink;
                 default:
-                    return Color.MediumOrchid;
+                    return Color.Plum;
             }
         }
     }

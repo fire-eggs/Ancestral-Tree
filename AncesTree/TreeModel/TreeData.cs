@@ -1,4 +1,5 @@
-﻿using AncesTree.TreeLayout;
+﻿using System.Collections.Generic;
+using AncesTree.TreeLayout;
 using GEDWrap;
 using System;
 using System.Drawing;
@@ -12,7 +13,7 @@ namespace AncesTree.TreeModel
     {
         int Wide { get; }
         int High { get; }
-        int CenterX { get; }
+        int ParentVertLocX { get; }
     }
 
     public class PersonNode : ITreeData
@@ -21,7 +22,7 @@ namespace AncesTree.TreeModel
 
         public int Wide { get; private set; }
         public int High { get; private set; }
-        public int CenterX { get; private set; }
+        public int ParentVertLocX { get; private set; }
         public bool IsReal { get; set; }
 
         public Person Who { get; set; }
@@ -33,7 +34,7 @@ namespace AncesTree.TreeModel
             Wide = width;
             High = height;
 
-            CenterX = (int) (width/2.0);
+            ParentVertLocX = (int) (width/2.0);
 
             IsReal = true;
         }
@@ -44,6 +45,24 @@ namespace AncesTree.TreeModel
         public Color BackColor { get; set; }
 
         public bool DrawVert { get; set; }
+
+        private List<ITreeData> _multSpouses;
+
+        public void AddSpouse(ITreeData node)
+        {
+            // In the multi-marriage situation, the child
+            // has been created as a PersonNode, and each
+            // spouse as "not real" PersonNodes. To be able
+            // to draw the appropriate edge(s) from the
+            // child to each spouse, track them here.
+            if (_multSpouses == null)
+                _multSpouses = new List<ITreeData>();
+            _multSpouses.Add(node);
+        }
+
+        public bool HasSpouses { get { return _multSpouses != null; } }
+
+        public List<ITreeData> Spouses { get { return _multSpouses; } }
     }
 
     // A node consisting of two PersonNodes, connected with a line.
@@ -58,14 +77,14 @@ namespace AncesTree.TreeModel
 
         public int High { get { return Math.Max(P1.High, P2.High); } }
 
-        public int CenterX // TODO rename: location of upward line to parent bar
+        public int ParentVertLocX
         {
             get
             {
                 if (P1.DrawVert) // line should be drawn from P1
-                    return P1.CenterX;
+                    return P1.ParentVertLocX;
                 // line should be drawn from P2
-                return P1.Wide + UNION_JOIN_WIDE + P2.CenterX;
+                return P1.Wide + UNION_JOIN_WIDE + P2.ParentVertLocX;
             }
         }
 
@@ -87,27 +106,32 @@ namespace AncesTree.TreeModel
     public class NodeFactory : IDisposable
     {
         private readonly Graphics _graphics;
-        private readonly Font _font;
+        private readonly Font _mainFont;
+        private readonly Font _spouseFont;
 
-        public NodeFactory(Control c, Font f)
+        public NodeFactory(Control c, Font f, Font spouseFont)
         {
             _graphics = c.CreateGraphics();
-            _font = f;
+            _mainFont = f;
+            _spouseFont = spouseFont;
         }
 
         public void Dispose()
         {
             _graphics.Dispose();
-            _font.Dispose();
+            _mainFont.Dispose();
         }
 
         public ITreeData Create(Person p, string s, Color clr, bool isSpouse = false)
         {
             var s2 = s.Replace("\n", Environment.NewLine);
-            SizeF txtSz = _graphics.MeasureString(s2, _font, 1000, StringFormat.GenericTypographic);
+            SizeF txtSz = _graphics.MeasureString(s2,
+                isSpouse ? _spouseFont : _mainFont,
+                1000, StringFormat.GenericDefault);
+                //StringFormat.GenericTypographic);
 
-            int w = (int)(txtSz.Width + 9); // TODO why so much extra required?
-            int h = (int)(txtSz.Height + 2);
+            int w = (int) (txtSz.Width); //+ 9); // TODO why so much extra required?
+            int h = (int) (txtSz.Height);// + 2);
             var node = new PersonNode(p, s, w, h);
             node.BackColor = clr;
             node.DrawVert = !isSpouse; // TODO brother/sister incest: both spouses are children
