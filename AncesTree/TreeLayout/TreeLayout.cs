@@ -203,11 +203,10 @@ namespace AncesTree.TreeLayout
 
         private void calcSizeOfLevels(TreeNode node, int level)
         {
-            double oldSize;
+            double oldSize = 0;
             if (sizeOfLevel.Count <= level)
             {
                 sizeOfLevel.Add(0d);
-                oldSize = 0;
             }
             else
             {
@@ -215,7 +214,6 @@ namespace AncesTree.TreeLayout
             }
 
             double size = getNodeThickness(node);
-            // size = nodeExtentProvider.getHeight(node);
             if (oldSize < size)
             {
                 sizeOfLevel[level] = size;
@@ -275,7 +273,7 @@ namespace AncesTree.TreeLayout
         private class NormalizedPosition
         {
 
-            private TreeLayout<TreeNode> treeLayout;
+            private readonly TreeLayout<TreeNode> treeLayout;
             private double x_relativeToRoot;
             private double y_relativeToRoot;
 
@@ -307,13 +305,11 @@ namespace AncesTree.TreeLayout
         // ------------------------------------------------------------------------
         // The Algorithm
 
-        private readonly bool useIdentity;
-
         private readonly Dictionary<TreeNode, double> mod;
         private readonly Dictionary<TreeNode, TreeNode> thread;
         private readonly Dictionary<TreeNode, double> prelim;
-        private readonly Dictionary<TreeNode, double> change;
-        private readonly Dictionary<TreeNode, double> shift;
+        private readonly Dictionary<TreeNode, double> changeDict;
+        private readonly Dictionary<TreeNode, double> shiftDict;
         private readonly Dictionary<TreeNode, TreeNode> ancestor1;
         private readonly Dictionary<TreeNode, int> number;
         private readonly Dictionary<TreeNode, NormalizedPosition> positions;
@@ -407,43 +403,43 @@ namespace AncesTree.TreeLayout
 
         private double getChange(TreeNode node)
         {
-            if (change.ContainsKey(node))
+            if (changeDict.ContainsKey(node))
             {
-                return change[node];
+                return changeDict[node];
             }
             return 0;
         }
 
         private void setChange(TreeNode node, double d)
         {
-            if (change.ContainsKey(node))
+            if (changeDict.ContainsKey(node))
             {
-                change[node] = d;
+                changeDict[node] = d;
             }
             else
             {
-                change.Add(node, d);
+                changeDict.Add(node, d);
             }
         }
 
         private double getShift(TreeNode node)
         {
-            if (shift.ContainsKey(node))
+            if (shiftDict.ContainsKey(node))
             {
-                return shift[node];
+                return shiftDict[node];
             }
             return 0;
         }
 
         private void setShift(TreeNode node, double d)
         {
-            if (shift.ContainsKey(node))
+            if (shiftDict.ContainsKey(node))
             {
-                shift[node] = d;
+                shiftDict[node] = d;
             }
             else
             {
-                shift.Add(node, d);
+                shiftDict.Add(node, d);
             }
 
         }
@@ -461,9 +457,7 @@ namespace AncesTree.TreeLayout
         private double getDistance(TreeNode v, TreeNode w)
         {
             double sizeOfNodes = getNodeSize(v) + getNodeSize(w);
-
-            double distance = sizeOfNodes/2
-                              + configuration.getGapBetweenNodes(); //(v, w);
+            double distance = sizeOfNodes/2 + configuration.getGapBetweenNodes();
             return distance;
         }
 
@@ -487,7 +481,7 @@ namespace AncesTree.TreeLayout
          */
         private int getNumber(TreeNode node, TreeNode parentNode)
         {
-            if (!shift.ContainsKey(node))
+            if (!shiftDict.ContainsKey(node))
             {
                 int i = 1;
                 foreach (TreeNode child in tree.getChildren(parentNode))
@@ -516,8 +510,7 @@ namespace AncesTree.TreeLayout
          * @return the greatest distinct ancestor of vIMinus and its right neighbor
          *         v
          */
-        private TreeNode ancestor(TreeNode vIMinus, TreeNode v, TreeNode parentOfV,
-                TreeNode defaultAncestor)
+        private TreeNode ancestor(TreeNode vIMinus, TreeNode parentOfV, TreeNode defaultAncestor)
         {
             TreeNode ancestor = getAncestor(vIMinus);
 
@@ -525,8 +518,7 @@ namespace AncesTree.TreeLayout
             // parent as v) it is also the greatest distinct ancestor vIMinus and
             // v. Otherwise it is the defaultAncestor
 
-            return tree.isChildOfParent(ancestor, parentOfV) ? ancestor
-                    : defaultAncestor;
+            return tree.isChildOfParent(ancestor, parentOfV) ? ancestor : defaultAncestor;
         }
 
         private void moveSubtree(TreeNode wMinus, TreeNode wPlus, TreeNode parent,
@@ -624,8 +616,7 @@ namespace AncesTree.TreeLayout
 
                 if (shift > 0)
                 {
-                    moveSubtree(ancestor(vIMinus, v, parentOfV, defaultAncestor),
-                            v, parentOfV, shift);
+                    moveSubtree(ancestor(vIMinus, parentOfV, defaultAncestor), v, parentOfV, shift);
                     sIPlus = sIPlus + shift;
                     sOPlus = sOPlus + shift;
                 }
@@ -849,30 +840,15 @@ namespace AncesTree.TreeLayout
             this.tree = tree;
             this.nodeExtentProvider = nodeExtentProvider;
             this.configuration = configuration;
-            this.useIdentity = useIdentity;
 
-            if (this.useIdentity)
-            {
-                this.mod = new Dictionary<TreeNode, Double>();
-                this.thread = new Dictionary<TreeNode, TreeNode>();
-                this.prelim = new Dictionary<TreeNode, Double>();
-                this.change = new Dictionary<TreeNode, Double>();
-                this.shift = new Dictionary<TreeNode, Double>();
-                this.ancestor1 = new Dictionary<TreeNode, TreeNode>();
-                this.number = new Dictionary<TreeNode, int>();
-                this.positions = new Dictionary<TreeNode, NormalizedPosition>();
-            }
-            else
-            {
-                this.mod = new Dictionary<TreeNode, Double>();
-                this.thread = new Dictionary<TreeNode, TreeNode>();
-                this.prelim = new Dictionary<TreeNode, Double>();
-                this.change = new Dictionary<TreeNode, Double>();
-                this.shift = new Dictionary<TreeNode, Double>();
-                this.ancestor1 = new Dictionary<TreeNode, TreeNode>();
-                this.number = new Dictionary<TreeNode, int>();
-                this.positions = new Dictionary<TreeNode, NormalizedPosition>();
-            }
+            this.mod = new Dictionary<TreeNode, Double>();
+            this.thread = new Dictionary<TreeNode, TreeNode>();
+            this.prelim = new Dictionary<TreeNode, Double>();
+            this.changeDict = new Dictionary<TreeNode, Double>();
+            this.shiftDict = new Dictionary<TreeNode, Double>();
+            this.ancestor1 = new Dictionary<TreeNode, TreeNode>();
+            this.number = new Dictionary<TreeNode, int>();
+            this.positions = new Dictionary<TreeNode, NormalizedPosition>();
 
             // No need to explicitly set mod, thread and ancestor as their getters
             // are taking care of the initial values. This avoids a full tree walk
@@ -899,7 +875,7 @@ namespace AncesTree.TreeLayout
         {
             if (nodes.ContainsKey(newNode))
             {
-                throw new SystemException(String.Format("Node used more than once in tree: %s", newNode));
+                throw new Exception(String.Format("Node used more than once in tree: {0}", newNode));
             }
             nodes.Add(newNode, newNode);
             foreach (TreeNode n in tree.getChildren(newNode))
@@ -921,8 +897,7 @@ namespace AncesTree.TreeLayout
          */
         public void checkTree()
         {
-            Dictionary<TreeNode, TreeNode> nodes = this.useIdentity ? new Dictionary<TreeNode, TreeNode>()
-                    : new Dictionary<TreeNode, TreeNode>();
+            Dictionary<TreeNode, TreeNode> nodes = new Dictionary<TreeNode, TreeNode>();
 
             // Traverse the tree and check if each node is only used once.
             addUniqueNodes(nodes, tree.getRoot());
