@@ -33,6 +33,17 @@ namespace AncesTree
             mnuMRU.MaxEntries = 7;
 
             LoadSettings(); // NOTE: must go after mnuMRU init
+
+            treePanel1.OnNodeClick += TreePanel1_OnNodeClick;
+        }
+
+        private void TreePanel1_OnNodeClick(object sender, ITreeData node)
+        {
+            var pnode = node as PersonNode;
+            if (pnode != null)
+            {
+                TreePerson(pnode.Who);
+            }
         }
 
         private void OnMRU(int number, string filename)

@@ -2,6 +2,7 @@
 using AncesTree.TreeModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,14 @@ namespace AncesTree
 {
     public class TreePanel2 : Panel
     {
+        public delegate void NodeClick(object sender, ITreeData node);
+        public delegate void NodeHover(object sender, ITreeData node);
+
+        [Browsable(true)]
+        public event NodeClick OnNodeClick;
+        [Browsable(true)]
+        public event NodeHover OnNodeHover;
+
         private TreeConfiguration _config;
 
         public TreePanel2()
@@ -21,6 +30,35 @@ namespace AncesTree
             BackColor = Color.Beige;
             DoubleBuffered = true;
             Zoom = 1.0f;
+
+            MouseClick += TreePanel2_MouseClick;
+            MouseMove += TreePanel2_MouseMove;
+        }
+
+        private void TreePanel2_MouseMove(object sender, MouseEventArgs e)
+        {
+            var node = findNodeByPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeHover?.Invoke(this, node);
+        }
+
+        private ITreeData findNodeByPoint(int x, int y)
+        {
+            if (_boxen == null)
+                return null;
+            foreach (var nodeRect in _boxen.getNodeBounds().Values)
+            {
+                if (nodeRect.Contains(x, y))
+                    return _boxen.getNodeBounds().FirstOrDefault(i => i.Value == nodeRect).Key;
+            }
+            return null;
+        }
+
+        private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
+        {
+            var node = findNodeByPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeClick?.Invoke(this, node);
         }
 
         public void drawTree(Graphics g)
@@ -40,6 +78,7 @@ namespace AncesTree
             _g.ScaleTransform(_zoom, _zoom);
             _g.TranslateTransform(_margin, _margin);
 
+            // TODO create and cache outside paint
             _duplPen = _config.DuplLine.GetPen();
             _multEdge = _config.MMargLine.GetPen();
             _border = _config.NodeBorder.GetPen();
