@@ -42,18 +42,13 @@ namespace AncesTree.TreeModel
 
         private static ITreeData MakeNode(Person who)
         {
-            //// No spouse/children: make a personnode
+            // No spouse/children: make a personnode
             if (who.SpouseIn.Count == 0)
             {
                 return _nf.Create(who, StringForNode(who), ColorForNode(who));
             }
 
             Union marr = who.SpouseIn.First();
-
-            //var rootP = _nf.Create(who, StringForNode(who), ColorForNode(who));
-            //Person spouse = marr.Spouse(who);
-            //var spouseP = _nf.Create(spouse, StringForNode(spouse), ColorForNode(spouse));
-            //return _nf.Create(rootP, spouseP);
 
             // convention of husband-left, wife-right
             var p1 = _nf.Create(marr.Husband, StringForNode(marr.Husband), 
@@ -164,7 +159,7 @@ namespace AncesTree.TreeModel
         public static string StringForNode(Person who)
         {
             if (who == null)
-                return string.Format("{3}?{3}?-?", "", "", "", Environment.NewLine); ;
+                return string.Format("{3}?{3}?-?", "", "", "", Environment.NewLine);
             var byr = who.BirthDate == null ? "?" : who.BirthDate.Year.ToString();
 
             // TODO need DeathDate from GedWrap!

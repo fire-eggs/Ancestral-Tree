@@ -46,7 +46,7 @@ namespace AncesTree
             btnBackColor.Value = _settings.BackColor;
         }
 
-        private void OnColorChange(ColorButton sender, ColorValues newValue)
+        private void OnColorChange(object sender, ColorValues newValue)
         {
             // TODO is member binding possible?
             // TODO just rebuild settings from controls?
@@ -137,7 +137,7 @@ namespace AncesTree
             Rebuild();
         }
 
-        private void penStyle_OnLineStyleChange(PenStyle sender)
+        private void penStyle_OnLineStyleChange(object sender)
         {
             if (!_loadComplete)
                 return;

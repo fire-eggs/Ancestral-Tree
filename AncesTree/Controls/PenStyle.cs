@@ -9,7 +9,7 @@ namespace AncesTree.Controls
 {
     public partial class PenStyle : UserControl
     {
-        public delegate void LineStyleChanged(PenStyle sender);
+        public delegate void LineStyleChanged(object sender);
 
         [Browsable(true)]
         public event LineStyleChanged OnLineStyleChange;
@@ -53,7 +53,7 @@ namespace AncesTree.Controls
                 OnLineStyleChange(this);
         }
 
-        private void colorButton1_OnColorChange(ColorButton sender, ColorValues newValue)
+        private void colorButton1_OnColorChange(object sender, ColorValues newValue)
         {
             Fire();
         }

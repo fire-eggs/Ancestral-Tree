@@ -8,7 +8,7 @@ namespace AncesTree.Controls
 {
     public class ColorButton : Button
     {
-        public delegate void ColorChanged(ColorButton sender, ColorValues newValue);
+        public delegate void ColorChanged(object sender, ColorValues newValue);
 
         [Browsable(true)]
         public event ColorChanged OnColorChange;

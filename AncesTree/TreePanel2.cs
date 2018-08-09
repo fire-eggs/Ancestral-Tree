@@ -3,7 +3,6 @@ using AncesTree.TreeModel;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -153,9 +152,8 @@ namespace AncesTree
             PersonNode foo = node as PersonNode;
             if (foo != null)
             {
-                if (foo.Text == " " && foo.Who == null)
-                    ; // fake for multi-marriage at root, don't draw
-                else
+                // Don't draw the fake for multi-marriage at root
+                if (foo.Text != " " || foo.Who != null)
                     paintABox(foo, box);
             }
             else
@@ -196,9 +194,8 @@ namespace AncesTree
             if (parent is PersonNode)
             {
                 var p = parent as PersonNode;
-                if (p.Who == null && p.Text == " ")
-                    ; // fake root for multi-marriage, don't draw!
-                else
+                // Don't draw the fake for multi-marriage at root
+                if (p.Text != " " || p.Who != null)
                     paintEdges(parent as PersonNode);
             }
             else
