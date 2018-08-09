@@ -18,7 +18,7 @@ namespace AncesTree
 {
     public partial class Form1 : Form
     {
-        readonly List<object> _cmbItems = new List<object>();
+        readonly List<CmbItem> _cmbItems = new List<CmbItem>();
         protected MruStripMenu mnuMRU;
 
         public Form1()
@@ -40,9 +40,15 @@ namespace AncesTree
         private void TreePanel1_OnNodeClick(object sender, ITreeData node)
         {
             var pnode = node as PersonNode;
-            if (pnode != null)
+            if (pnode == null)
+                return;
+            for (int i = 0; i < _cmbItems.Count; i++)
             {
-                TreePerson(pnode.Who);
+                if (_cmbItems[i].Value == pnode.Who)
+                {
+                    personSel.SelectedIndex = i;
+                    return;
+                }
             }
         }
 
@@ -132,8 +138,6 @@ namespace AncesTree
 
         private void TreePerson(Person val)
         {
-            // TODO read config from file
-            //var config = TreeConfiguration.DefaultSettings();
             var config = TreeConfiguration.LoadConfig();
             var tree = TreeBuild.BuildTree(treePanel1, config, val);
 
@@ -179,6 +183,12 @@ namespace AncesTree
 
         private Forest gedtrees;
 
+        private class CmbItem
+        {
+            public string Text { get; set; }
+            public Person Value { get; set; }
+        }
+
         void LoadGed()
         {
             gedtrees = new Forest();
@@ -205,7 +215,7 @@ namespace AncesTree
             Array.Sort(nameSort);
             foreach (var s in nameSort)
             {
-                _cmbItems.Add(new {Text=s,Value=comboPersons[s]});
+                _cmbItems.Add(new CmbItem {Text=s,Value=comboPersons[s]});
             }
             
             personSel.DisplayMember = "Text";
@@ -217,7 +227,6 @@ namespace AncesTree
             personSel.SelectedIndex = 0;
         }
 
-        // TODO consider making Zoom GUI part of treepanel control?
         private void btnZoomIn_Click(object sender, EventArgs e)
         {
             treePanel1.Zoom = treePanel1.Zoom + 0.1f;
@@ -233,17 +242,7 @@ namespace AncesTree
             treePanel1.Zoom = 1.0f;
         }
 
-        private void treePanel_Click(object sender, EventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void treePanel_MouseMove(object sender, MouseEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void btnToImage_Click(object sender, EventArgs e)
         {
             // save to image
 
@@ -262,11 +261,12 @@ namespace AncesTree
             //throw new NotImplementedException();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnConfig_Click(object sender, EventArgs e)
         {
             Settings dlg = new Settings();
             dlg.Owner = this;
             dlg.ShowDialog();
+            treePanel1.Invalidate();
         }
     }
 }

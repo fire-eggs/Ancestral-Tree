@@ -42,10 +42,10 @@
             this.btnZoomIn = new System.Windows.Forms.Button();
             this.btnZoomOut = new System.Windows.Forms.Button();
             this.btn100Percent = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSaveToImage = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnConfig = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -140,8 +140,8 @@
             this.flowLayoutPanel2.Controls.Add(this.btnZoomIn);
             this.flowLayoutPanel2.Controls.Add(this.btnZoomOut);
             this.flowLayoutPanel2.Controls.Add(this.btn100Percent);
-            this.flowLayoutPanel2.Controls.Add(this.button1);
-            this.flowLayoutPanel2.Controls.Add(this.button2);
+            this.flowLayoutPanel2.Controls.Add(this.btnSaveToImage);
+            this.flowLayoutPanel2.Controls.Add(this.btnConfig);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(594, 29);
@@ -180,15 +180,15 @@
             this.btn100Percent.UseVisualStyleBackColor = true;
             this.btn100Percent.Click += new System.EventHandler(this.btn100Percent_Click);
             // 
-            // button1
+            // btnSaveToImage
             // 
-            this.button1.Location = new System.Drawing.Point(437, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSaveToImage.Location = new System.Drawing.Point(437, 3);
+            this.btnSaveToImage.Name = "btnSaveToImage";
+            this.btnSaveToImage.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveToImage.TabIndex = 5;
+            this.btnSaveToImage.Text = "To Image";
+            this.btnSaveToImage.UseVisualStyleBackColor = true;
+            this.btnSaveToImage.Click += new System.EventHandler(this.btnToImage_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -205,15 +205,15 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // button2
+            // btnConfig
             // 
-            this.button2.Location = new System.Drawing.Point(518, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnConfig.Location = new System.Drawing.Point(518, 3);
+            this.btnConfig.Name = "btnConfig";
+            this.btnConfig.Size = new System.Drawing.Size(75, 23);
+            this.btnConfig.TabIndex = 6;
+            this.btnConfig.Text = "Config";
+            this.btnConfig.UseVisualStyleBackColor = true;
+            this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
             // 
             // Form1
             // 
@@ -256,9 +256,9 @@
         private System.Windows.Forms.Button btnZoomIn;
         private System.Windows.Forms.Button btnZoomOut;
         private System.Windows.Forms.Button btn100Percent;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSaveToImage;
         private TreePanel2 treePanel1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnConfig;
     }
 }
 

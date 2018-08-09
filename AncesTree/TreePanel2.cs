@@ -54,9 +54,36 @@ namespace AncesTree
             return null;
         }
 
+        private ITreeData getPersonFromUnion(UnionNode un, int x, int y)
+        {
+            var box = drawBounds(un);
+            Rectangle box1 = new Rectangle(box.X, box.Y, un.P1.Wide, un.P1.High);
+            if (box1.Contains(x, y))
+                return un.P1;
+
+            Rectangle box2;
+            if (un.Vertical)
+            {
+                box2 = new Rectangle(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
+            }
+            else
+            {
+                box2 = new Rectangle(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
+            }
+            if (box2.Contains(x, y))
+                return un.P2;
+            return null;
+        }
+
         private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
         {
-            var node = findNodeByPoint(e.X, e.Y);
+            ITreeData node = findNodeByPoint(e.X, e.Y);
+            UnionNode un = node as UnionNode;
+            if (un != null)
+            {
+                node = getPersonFromUnion(un, e.X, e.Y);
+            }
+
             if (node != null)
                 OnNodeClick?.Invoke(this, node);
         }
