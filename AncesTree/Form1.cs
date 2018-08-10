@@ -39,11 +39,11 @@ namespace AncesTree
             var pnode = node as PersonNode;
             if (pnode == null)
             {
-                toolTip1.Hide(this);
+                toolTip1.Hide(treePanel1);
             }
             else
             {
-                toolTip1.Show(pnode.Text, this, PointToClient(Control.MousePosition));
+                toolTip1.Show(pnode.Text, treePanel1);
             }
         }
 

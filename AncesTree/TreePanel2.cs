@@ -35,9 +35,21 @@ namespace AncesTree
             MouseMove += TreePanel2_MouseMove;
         }
 
+        int lastX = -1;
+        int lastY = -1;
         private void TreePanel2_MouseMove(object sender, MouseEventArgs e)
         {
-            var node = findNodeByPoint(e.X, e.Y);
+            if (Math.Abs(lastX - e.X) < 3 && Math.Abs(lastY - e.Y) < 3)
+                return;
+            lastX = e.X;
+            lastY = e.Y;
+
+            var node = findNodeByPoint(e.X - 8, e.Y - 8); // WHY is this delta necessary???
+            UnionNode un = node as UnionNode;
+            if (un != null)
+            {
+                node = getPersonFromUnion(un, e.X - 8, e.Y - 8);
+            }
             OnNodeHover?.Invoke(this, node);
         }
 
@@ -57,21 +69,24 @@ namespace AncesTree
             return null;
         }
 
-        private ITreeData getPersonFromUnion(UnionNode un, int x, int y)
+        private ITreeData getPersonFromUnion(UnionNode un, int x0, int y0)
         {
-            var box = drawBounds(un);
-            Rectangle box1 = new Rectangle(box.X, box.Y, un.P1.Wide, un.P1.High);
+            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
+            float y = y0 / _zoom;
+
+            var box = _boxen.getNodeBounds()[un]; //drawBounds(un);
+            var box1 = new Rect(box.X, box.Y, un.P1.Wide, un.P1.High);
             if (box1.Contains(x, y))
                 return un.P1;
 
-            Rectangle box2;
+            Rect box2;
             if (un.Vertical)
             {
-                box2 = new Rectangle(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
+                box2 = new Rect(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
             }
             else
             {
-                box2 = new Rectangle(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
+                box2 = new Rect(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
             }
             if (box2.Contains(x, y))
                 return un.P2;
@@ -80,11 +95,11 @@ namespace AncesTree
 
         private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
         {
-            ITreeData node = findNodeByPoint(e.X, e.Y);
+            ITreeData node = findNodeByPoint(e.X-8, e.Y-8); // WHY is this delta necessary?
             UnionNode un = node as UnionNode;
             if (un != null)
             {
-                node = getPersonFromUnion(un, e.X, e.Y);
+                node = getPersonFromUnion(un, e.X-8, e.Y-8);
             }
 
             if (node != null)
