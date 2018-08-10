@@ -38,14 +38,17 @@ namespace AncesTree
         private void TreePanel2_MouseMove(object sender, MouseEventArgs e)
         {
             var node = findNodeByPoint(e.X, e.Y);
-            if (node != null)
-                OnNodeHover?.Invoke(this, node);
+            OnNodeHover?.Invoke(this, node);
         }
 
-        private ITreeData findNodeByPoint(int x, int y)
+        private ITreeData findNodeByPoint(int x0, int y0)
         {
             if (_boxen == null)
                 return null;
+
+            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
+            float y = y0 / _zoom;
+
             foreach (var nodeRect in _boxen.getNodeBounds().Values)
             {
                 if (nodeRect.Contains(x, y))

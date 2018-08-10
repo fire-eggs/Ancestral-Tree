@@ -31,6 +31,20 @@ namespace AncesTree
             LoadSettings(); // NOTE: must go after mnuMRU init
 
             treePanel1.OnNodeClick += TreePanel1_OnNodeClick;
+            treePanel1.OnNodeHover += TreePanel1_OnNodeHover;
+        }
+
+        private void TreePanel1_OnNodeHover(object sender, ITreeData node)
+        {
+            var pnode = node as PersonNode;
+            if (pnode == null)
+            {
+                toolTip1.Hide(this);
+            }
+            else
+            {
+                toolTip1.Show(pnode.Text, this, PointToClient(Control.MousePosition));
+            }
         }
 
         private void TreePanel1_OnNodeClick(object sender, ITreeData node)
