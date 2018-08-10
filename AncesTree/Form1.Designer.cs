@@ -103,6 +103,7 @@
             // 
             // personSel
             // 
+            this.personSel.Enabled = false;
             this.personSel.FormattingEnabled = true;
             this.personSel.Location = new System.Drawing.Point(44, 3);
             this.personSel.Name = "personSel";

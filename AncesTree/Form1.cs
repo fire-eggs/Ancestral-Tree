@@ -25,10 +25,6 @@ namespace AncesTree
         {
             InitializeComponent();
 
-            personSel.DisplayMember = "Text";
-            personSel.ValueMember = "Value";
-            try { personSel.DataSource = _cmbItems; } catch { }
-
             mnuMRU = new MruStripMenuInline(fileToolStripMenuItem, recentFilesToolStripMenuItem, OnMRU);
             mnuMRU.MaxEntries = 7;
 
@@ -221,6 +217,7 @@ namespace AncesTree
             personSel.DisplayMember = "Text";
             personSel.ValueMember = "Value";
             personSel.DataSource = _cmbItems;
+            personSel.SelectedIndex = -1; // force SelectedIndexChanged to happen below
             personSel.EndUpdate();
             personSel.Enabled = true;
             personSel.SelectedIndexChanged += personSel_SelectedIndexChanged;
@@ -258,7 +255,16 @@ namespace AncesTree
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            //throw new NotImplementedException();
+            if (!e.Control)
+                return;
+            if (e.KeyCode == Keys.Oemplus)
+            {
+                btnZoomIn_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.OemMinus)
+            {
+                btnZoomOut_Click(null, null);
+            }
         }
 
         private void btnConfig_Click(object sender, EventArgs e)
