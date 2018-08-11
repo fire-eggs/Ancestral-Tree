@@ -1,13 +1,12 @@
-﻿using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
-using AncesTree.TreeLayout;
+﻿using AncesTree.TreeLayout;
 using AncesTree.TreeModel;
 using DrawAnce;
 using GEDWrap;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -47,19 +46,24 @@ namespace AncesTree
             }
         }
 
-        private void TreePanel1_OnNodeClick(object sender, ITreeData node)
+        private void SelectPerson(Person who)
         {
-            var pnode = node as PersonNode;
-            if (pnode == null)
-                return;
             for (int i = 0; i < _cmbItems.Count; i++)
             {
-                if (_cmbItems[i].Value == pnode.Who)
+                if (_cmbItems[i].Value == who)
                 {
                     personSel.SelectedIndex = i;
                     return;
                 }
             }
+        }
+
+        private void TreePanel1_OnNodeClick(object sender, ITreeData node)
+        {
+            var pnode = node as PersonNode;
+            if (pnode == null)
+                return;
+            SelectPerson(pnode.Who);
         }
 
         private void OnMRU(int number, string filename)
@@ -191,7 +195,7 @@ namespace AncesTree
             ProcessGED(ofd.FileName);
         }
 
-        private Forest gedtrees;
+        private Forest _gedtrees;
 
         private class CmbItem
         {
@@ -201,8 +205,8 @@ namespace AncesTree
 
         void LoadGed()
         {
-            gedtrees = new Forest();
-            gedtrees.LoadGEDCOM(LastFile);
+            _gedtrees = new Forest();
+            _gedtrees.LoadGEDCOM(LastFile);
 
             personSel.SelectedIndexChanged -= personSel_SelectedIndexChanged;
             personSel.Enabled = false;
@@ -212,11 +216,12 @@ namespace AncesTree
 
             HashSet<string> comboNames = new HashSet<string>();
             Dictionary<string, Person> comboPersons = new Dictionary<string, Person>();
-            foreach (var indiId in gedtrees.AllIndiIds)
+            foreach (var indiId in _gedtrees.AllIndiIds)
             {
-                Person p = gedtrees.PersonById(indiId);
+                Person p = _gedtrees.PersonById(indiId);
+                string byear = p.BirthDate == null ? "?" : p.BirthDate.Year.ToString();
 
-                var text = string.Format("{0},{1} [{2}]", p.Surname, p.Given, indiId);
+                var text = string.Format("{0},{1} [b. {3}] \t ({2})", p.Surname, p.Given, indiId, byear);
                 comboNames.Add(text);
                 comboPersons.Add(text, p);
             }
@@ -317,6 +322,19 @@ namespace AncesTree
             dlg.Owner = this;
             dlg.ShowDialog();
             treePanel1.Invalidate();
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            PersonSearch ps = new PersonSearch();
+            ps.Tree = _gedtrees;
+            ps.Owner = this;
+            ps.StartPosition = FormStartPosition.CenterParent;
+            var result = ps.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                SelectPerson(ps.SelectedPerson);
+            }
         }
     }
 }
