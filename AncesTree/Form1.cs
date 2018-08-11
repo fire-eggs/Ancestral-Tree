@@ -253,9 +253,39 @@ namespace AncesTree
             treePanel1.Zoom = 1.0f;
         }
 
+        private string _lastSaveFolder; // TODO to app settings
+        private int _lastUsedSaveFilter = 2; // TODO to app settings
+        private SaveFileDialog _sfd;
+
         private void btnToImage_Click(object sender, EventArgs e)
         {
             // save to image
+
+            if (_sfd == null)
+            {
+                _lastSaveFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                _sfd = new SaveFileDialog();
+                _sfd.Filter = "Bitmap (*.bmp)|*.bmp|Jpeg (*.jpg)|*.jpg|PNG (*.png)|*.png";
+                _sfd.Title = "Save current tree to image";
+                _sfd.CheckPathExists = true;
+            }
+            _sfd.InitialDirectory = Directory.Exists(_lastSaveFolder) ? _lastSaveFolder : @"C:\";
+            _sfd.FilterIndex = _lastUsedSaveFilter;
+            if (_sfd.ShowDialog() != DialogResult.OK)
+                return;
+
+            _lastUsedSaveFilter = _sfd.FilterIndex;
+            _lastSaveFolder = Path.GetDirectoryName(_sfd.FileName);
+            var iFormat = ImageFormat.Png;
+            switch (_lastUsedSaveFilter)
+            {
+                case 1:
+                    iFormat = ImageFormat.Bmp;
+                    break;
+                case 2:
+                    iFormat = ImageFormat.Jpeg;
+                    break;
+            }
 
             using (Bitmap b = new Bitmap(treePanel1.Width, treePanel1.Height))
             {
@@ -263,7 +293,7 @@ namespace AncesTree
                 {
                     treePanel1.drawTree(g);
                 }
-                b.Save(@"e:\ancestree.png", ImageFormat.Png);
+                b.Save(_sfd.FileName, iFormat);
             }
         }
 
