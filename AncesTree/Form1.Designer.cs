@@ -37,8 +37,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.personSel = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.treePanel1 = new AncesTree.TreePanel2();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.btnZoomIn = new System.Windows.Forms.Button();
             this.btnZoomOut = new System.Windows.Forms.Button();
             this.btn100Percent = new System.Windows.Forms.Button();
@@ -46,7 +46,11 @@
             this.btnConfig = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnSearch = new System.Windows.Forms.Button();
+            this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pageSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treePanel1 = new AncesTree.TreePanel2();
+            this.printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -56,7 +60,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.printToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(992, 24);
@@ -125,17 +130,6 @@
             this.flowLayoutPanel1.TabIndex = 3;
             this.flowLayoutPanel1.WrapContents = false;
             // 
-            // treePanel1
-            // 
-            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
-            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.treePanel1.Location = new System.Drawing.Point(3, 3);
-            this.treePanel1.Name = "treePanel1";
-            this.treePanel1.Size = new System.Drawing.Size(643, 330);
-            this.treePanel1.TabIndex = 0;
-            this.treePanel1.TreeMargin = 10;
-            this.treePanel1.Zoom = 1F;
-            // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.AutoSize = true;
@@ -152,6 +146,17 @@
             this.flowLayoutPanel2.Size = new System.Drawing.Size(676, 29);
             this.flowLayoutPanel2.TabIndex = 2;
             this.flowLayoutPanel2.WrapContents = false;
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Image = global::AncesTree.Properties.Resources.icons8_search_20;
+            this.btnSearch.Location = new System.Drawing.Point(344, 3);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(34, 23);
+            this.btnSearch.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.btnSearch, "Search for person");
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // btnZoomIn
             // 
@@ -220,16 +225,47 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // btnSearch
+            // printToolStripMenuItem
             // 
-            this.btnSearch.Image = global::AncesTree.Properties.Resources.icons8_search_20;
-            this.btnSearch.Location = new System.Drawing.Point(344, 3);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(34, 23);
-            this.btnSearch.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.btnSearch, "Search for person");
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            this.printToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.previewToolStripMenuItem,
+            this.pageSettingsToolStripMenuItem,
+            this.printerToolStripMenuItem});
+            this.printToolStripMenuItem.Name = "printToolStripMenuItem";
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.printToolStripMenuItem.Text = "Print";
+            // 
+            // previewToolStripMenuItem
+            // 
+            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
+            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previewToolStripMenuItem.Text = "Preview";
+            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
+            // 
+            // pageSettingsToolStripMenuItem
+            // 
+            this.pageSettingsToolStripMenuItem.Name = "pageSettingsToolStripMenuItem";
+            this.pageSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pageSettingsToolStripMenuItem.Text = "Page Settings";
+            this.pageSettingsToolStripMenuItem.Click += new System.EventHandler(this.pageSettingsToolStripMenuItem_Click);
+            // 
+            // treePanel1
+            // 
+            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
+            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.treePanel1.Location = new System.Drawing.Point(3, 3);
+            this.treePanel1.Name = "treePanel1";
+            this.treePanel1.Size = new System.Drawing.Size(643, 330);
+            this.treePanel1.TabIndex = 0;
+            this.treePanel1.TreeMargin = 10;
+            this.treePanel1.Zoom = 1F;
+            // 
+            // printerToolStripMenuItem
+            // 
+            this.printerToolStripMenuItem.Name = "printerToolStripMenuItem";
+            this.printerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.printerToolStripMenuItem.Text = "Printer";
+            this.printerToolStripMenuItem.Click += new System.EventHandler(this.printerToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -277,6 +313,10 @@
         private TreePanel2 treePanel1;
         private System.Windows.Forms.Button btnConfig;
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem previewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pageSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem printerToolStripMenuItem;
     }
 }
 

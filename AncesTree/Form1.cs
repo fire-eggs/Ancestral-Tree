@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -335,6 +336,92 @@ namespace AncesTree
             {
                 SelectPerson(ps.SelectedPerson);
             }
+        }
+
+        private int pageIndex;
+
+        private void previewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pageIndex = 0;
+            startPrint();
+
+            //var previewDlg = new EnhancedPrintPreviewDialog();
+            //previewDlg.ShowPageSettingsButton = true;
+            //previewDlg.ShowPrinterSettingsButton = true;
+            //previewDlg.ShowPrinterSettingsBeforePrint = true;
+            var previewDlg = new PrintPreviewDialog();
+            var pd = new PrintDocument();
+            if (_pageSettings != null)
+                pd.DefaultPageSettings = _pageSettings;
+            if (_printSettings != null)
+                pd.PrinterSettings = _printSettings;
+
+            pd.BeginPrint += Pd_BeginPrint;
+            pd.PrintPage += Pd_PrintPage;
+            previewDlg.Document = pd;
+            previewDlg.Owner = this;
+            previewDlg.StartPosition = FormStartPosition.CenterParent;
+            previewDlg.ShowDialog();
+
+            PrintBmp.Dispose();
+        }
+
+        private void Pd_BeginPrint(object sender, PrintEventArgs e)
+        {
+            pageIndex = 0;
+            if (PrintBmp == null)
+                startPrint();
+        }
+
+        private Bitmap PrintBmp;
+
+        private void startPrint()
+        {
+            PrintBmp = new Bitmap(treePanel1.Width, treePanel1.Height);
+            using (Graphics g = Graphics.FromImage(PrintBmp))
+            {
+                treePanel1.drawTree(g);
+            }
+        }
+
+        private void Pd_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            var printArea = e.MarginBounds;
+            int maxW = (int)Math.Ceiling((double)treePanel1.Width / e.MarginBounds.Width);
+            int maxY = (int)Math.Ceiling((double)treePanel1.Height / e.MarginBounds.Height);
+
+            int x = pageIndex % maxW;
+            int y = pageIndex / maxW;
+
+            var thisRect = new Rectangle(x * printArea.Width, y * printArea.Height, printArea.Width, printArea.Height);
+
+            e.Graphics.DrawImage(PrintBmp, printArea, thisRect, GraphicsUnit.Pixel);
+
+            pageIndex++;
+            e.HasMorePages = pageIndex < (maxW * maxY);
+        }
+
+        private PageSettings _pageSettings;
+        private PrinterSettings _printSettings;
+
+        private void pageSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var pd = new PrintDocument();
+            PageSetupDialog psd = new PageSetupDialog();
+            psd.Document = pd;
+            psd.ShowDialog();
+
+            _pageSettings = pd.DefaultPageSettings;
+        }
+
+        private void printerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var pd = new PrintDocument();
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            pdlg.ShowDialog();
+
+            _printSettings = pd.PrinterSettings;
         }
     }
 }
