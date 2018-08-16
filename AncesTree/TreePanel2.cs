@@ -176,10 +176,11 @@ namespace AncesTree
             if (_boxen == null)
                 return;
             var newSize = _boxen.getBounds();
-            // NOTE side-effect: control is invalidated from resize
+            // NOTE side-effect: control is invalidated from resize BUG except when size doesn't change!
             this.Size = new System.Drawing.Size
                 ((int)((newSize.Width + 2 * _margin) * _zoom),
                  (int)((newSize.Height + 2 * _margin) * _zoom));
+            Invalidate();
         }
 
         private Pen _border;

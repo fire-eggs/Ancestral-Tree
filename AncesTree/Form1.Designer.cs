@@ -239,14 +239,14 @@
             // 
             this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
             this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.previewToolStripMenuItem.Text = "Preview";
+            this.previewToolStripMenuItem.Text = "Print Preview...";
             this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
             // 
             // pageSettingsToolStripMenuItem
             // 
             this.pageSettingsToolStripMenuItem.Name = "pageSettingsToolStripMenuItem";
             this.pageSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.pageSettingsToolStripMenuItem.Text = "Page Settings";
+            this.pageSettingsToolStripMenuItem.Text = "Page Settings...";
             this.pageSettingsToolStripMenuItem.Click += new System.EventHandler(this.pageSettingsToolStripMenuItem_Click);
             // 
             // treePanel1
@@ -264,7 +264,7 @@
             // 
             this.printerToolStripMenuItem.Name = "printerToolStripMenuItem";
             this.printerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.printerToolStripMenuItem.Text = "Printer";
+            this.printerToolStripMenuItem.Text = "Printer Setup...";
             this.printerToolStripMenuItem.Click += new System.EventHandler(this.printerToolStripMenuItem_Click);
             // 
             // Form1
