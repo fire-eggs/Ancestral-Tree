@@ -149,6 +149,12 @@
   <ItemGroup>
     <None Include="icons8-search-20.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PrintPreview\PrintPreview.csproj">
+      <Project>{9e8d433b-efd1-4253-bd2c-c4e0db0bfd0e}</Project>
+      <Name>PrintPreview</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

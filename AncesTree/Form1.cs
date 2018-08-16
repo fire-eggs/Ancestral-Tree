@@ -2,6 +2,7 @@
 using AncesTree.TreeModel;
 using DrawAnce;
 using GEDWrap;
+using PrintPreview;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -339,17 +340,17 @@ namespace AncesTree
         }
 
         private int pageIndex;
+        private int _maxPages;
 
         private void previewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            pageIndex = 0;
-            startPrint();
+            var previewDlg = new EnhancedPrintPreviewDialog();
+            previewDlg.ShowPageSettingsButton = true;
+            previewDlg.ShowPrinterSettingsButton = true;
+            previewDlg.ShowPrinterSettingsBeforePrint = true;
 
-            //var previewDlg = new EnhancedPrintPreviewDialog();
-            //previewDlg.ShowPageSettingsButton = true;
-            //previewDlg.ShowPrinterSettingsButton = true;
-            //previewDlg.ShowPrinterSettingsBeforePrint = true;
-            var previewDlg = new PrintPreviewDialog();
+            previewDlg.OnPrintRangeSet += PreviewDlg_OnPrintRangeSet;
+
             var pd = new PrintDocument();
             if (_pageSettings != null)
                 pd.DefaultPageSettings = _pageSettings;
@@ -358,20 +359,35 @@ namespace AncesTree
 
             pd.BeginPrint += Pd_BeginPrint;
             pd.PrintPage += Pd_PrintPage;
+            pd.EndPrint += Pd_EndPrint;
             previewDlg.Document = pd;
             previewDlg.Owner = this;
             previewDlg.StartPosition = FormStartPosition.CenterParent;
             previewDlg.ShowDialog();
+        }
 
+        private void Pd_EndPrint(object sender, PrintEventArgs e)
+        {
             PrintBmp.Dispose();
+            PrintBmp = null;
         }
 
         private void Pd_BeginPrint(object sender, PrintEventArgs e)
         {
-            pageIndex = 0;
+            pageIndex = _startPage == 0 ? 0 : _startPage-1;
             if (PrintBmp == null)
                 startPrint();
         }
+
+        private int _startPage;
+        private int _endPage;
+
+        private void PreviewDlg_OnPrintRangeSet(object sender, EnhancedPrintPreviewDialog.PageRange newValue)
+        {
+            _startPage = newValue.From;
+            _endPage = newValue.To;
+        }
+
 
         private Bitmap PrintBmp;
 
@@ -387,8 +403,13 @@ namespace AncesTree
         private void Pd_PrintPage(object sender, PrintPageEventArgs e)
         {
             var printArea = e.MarginBounds;
+
             int maxW = (int)Math.Ceiling((double)treePanel1.Width / e.MarginBounds.Width);
             int maxY = (int)Math.Ceiling((double)treePanel1.Height / e.MarginBounds.Height);
+            if (_maxPages == 0)
+                _maxPages = maxW * maxY;
+
+            int stopPrint = _endPage == 0 ? _maxPages : _endPage;
 
             int x = pageIndex % maxW;
             int y = pageIndex / maxW;
@@ -398,7 +419,7 @@ namespace AncesTree
             e.Graphics.DrawImage(PrintBmp, printArea, thisRect, GraphicsUnit.Pixel);
 
             pageIndex++;
-            e.HasMorePages = pageIndex < (maxW * maxY);
+            e.HasMorePages = pageIndex < stopPrint;
         }
 
         private PageSettings _pageSettings;
@@ -418,6 +439,8 @@ namespace AncesTree
         {
             var pd = new PrintDocument();
             PrintDialog pdlg = new PrintDialog();
+            pdlg.AllowSomePages = true; // Need to specify page range somehow?
+//            pdlg.AllowCurrentPage = true;
             pdlg.Document = pd;
             pdlg.ShowDialog();
 
