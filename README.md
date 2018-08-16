@@ -23,14 +23,14 @@ Current features:
 4. Save to image.
 5. Preview and print to multiple pages.
 6. Search for people, filtering on names, birth date.
+7. Navigate to people via the tree.
 
 Future plans may include:
-1. View ancestors of any person.
+1. View ancestors (pedigree) of any person.
 2. Vertical orientation ('main' person on left).
 3. Control number of generations shown.
 5. Toggle display of multiple-marriages, duplicate-nodes.
 6. Collapse portions of the tree.
-7. Navigate to people via the tree.
 8. A more polished user interface.
 9. Documentation: user and developer.
 1. Internationalization.
