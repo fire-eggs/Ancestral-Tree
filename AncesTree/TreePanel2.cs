@@ -243,6 +243,8 @@ namespace AncesTree
             }
             else
             {
+                // Drawing a union node. Said node consists of two Person boxes.
+                // (Spouse connector drawn in PaintEdges).
                 UnionNode bar = node as UnionNode;
                 if (bar != null)
                 {
@@ -301,19 +303,33 @@ namespace AncesTree
             var b1 = drawBounds(parent);
 
             // Spouse connectors in a multi-marriage case.
-            // All spouses have been drawn to the right of 
+            // All spouses have been drawn to the right/below  
             // this node.
             if (parent.HasSpouses)
             {
-                int leftX = b1.Right;
-                int leftY = b1.Top + b1.Height/2;
-                foreach (var node in parent.Spouses)
+                if (parent.Vertical)
                 {
-                    var b3 = drawBounds(node);
-                    int rightX = b3.Left;
+                    int topX = b1.Left + b1.Width / 2; // TODO may need to adjust for narrower spouse nodes
+                    int topY = b1.Bottom;
+                    foreach (var node in parent.Spouses)
+                    {
+                        var b3 = drawBounds(node);
+                        int botY = b3.Top;
+                        _g.DrawLine(_multEdge, topX, topY, topX, botY);
+                    }
+                }
+                else
+                {
+                    int leftX = b1.Right;
+                    int leftY = b1.Top + b1.Height / 2;
+                    foreach (var node in parent.Spouses)
+                    {
+                        var b3 = drawBounds(node);
+                        int rightX = b3.Left;
 
-                    // TODO consider drawing distinct line for each?
-                    _g.DrawLine(_multEdge, leftX, leftY, rightX, leftY);
+                        // TODO consider drawing distinct line for each?
+                        _g.DrawLine(_multEdge, leftX, leftY, rightX, leftY);
+                    }
                 }
             }
 
