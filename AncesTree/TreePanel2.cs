@@ -3,6 +3,7 @@ using AncesTree.TreeModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -340,7 +341,44 @@ namespace AncesTree
             int parentX = b1.Left + b1.Width / 2;
             int parentY = b1.Bottom;
 
-            DrawChildrenEdgesH(parent, parentX, parentY);
+            if (parent.Vertical)
+                DrawChildrenEdgesV(parent);
+            else
+                DrawChildrenEdgesH(parent, parentX, parentY);
+        }
+
+        private void DrawChildrenEdgesV(ITreeData parent)
+        {
+            var b1 = drawBounds(parent);
+
+            // Line from right side of parent to half way across the gen. gap
+            int targetX = b1.Right + (gapBetweenLevels / 2);
+            int startY = b1.Top + b1.Height / 2;
+            _g.DrawLine(_childPen, b1.Right, startY, targetX, startY);
+
+            // Determine the top/bottom of the child-line
+            int minChildY = int.MaxValue;
+            int maxChildY = int.MinValue;
+            foreach (var child in getChildren(parent))
+            {
+                // Do not draw 'I'm a child' line for spouses
+                if (child is PersonNode && !((PersonNode)child).DrawVert)
+                    continue;
+
+                var b2 = drawBounds(child);
+
+                int childX = b2.Left;
+                int childY = b2.Top + child.ParentConnectLoc;
+
+                minChildY = Math.Min(minChildY, childY);
+                maxChildY = Math.Max(maxChildY, childY);
+
+                _g.DrawLine(_childPen, targetX, childY, childX, childY);
+            }
+            if (minChildY == maxChildY)
+                _g.DrawLine(_childPen, targetX, minChildY, targetX, startY);
+            else
+                _g.DrawLine(_childPen, targetX, minChildY, targetX, maxChildY);
         }
 
         private void DrawChildrenEdgesH(ITreeData parent, int startx, int starty)
@@ -371,7 +409,7 @@ namespace AncesTree
 
                 var b2 = drawBounds(child);
                 //int childX = (int) (b2.Left + b2.Width/2);
-                int childX = b2.Left + child.ParentVertLocX;
+                int childX = b2.Left + child.ParentConnectLoc;
                 int childY = b2.Top;
 
                 minChildX = Math.Min(minChildX, childX);
@@ -419,7 +457,7 @@ namespace AncesTree
 
                 var b2 = drawBounds(child);
                 int childX = b2.Left;
-                int childY = b2.Top + child.ParentVertLocX;
+                int childY = b2.Top + child.ParentConnectLoc;
 
                 minChildY = Math.Min(minChildY, childY);
                 maxChildY = Math.Max(maxChildY, childY);

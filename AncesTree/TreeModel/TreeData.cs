@@ -13,7 +13,7 @@ namespace AncesTree.TreeModel
     {
         int Wide { get; }
         int High { get; }
-        int ParentVertLocX { get; }
+        int ParentConnectLoc { get; }
         bool Vertical { get; }
     }
 
@@ -23,7 +23,7 @@ namespace AncesTree.TreeModel
 
         public int Wide { get; private set; }
         public int High { get; private set; }
-        public int ParentVertLocX { get; private set; }
+        public int ParentConnectLoc { get; private set; }
         public bool IsReal { get; set; }
 
         public bool Vertical { get; private set; }
@@ -38,7 +38,7 @@ namespace AncesTree.TreeModel
             High = height;
             Vertical = vertical;
 
-            ParentVertLocX = Vertical ? (int)(height/2.0) : (int) (width/2.0);
+            ParentConnectLoc = Vertical ? (int)(height/2.0) : (int) (width/2.0);
 
             IsReal = true;
         }
@@ -99,16 +99,16 @@ namespace AncesTree.TreeModel
             }
         }
 
-        public int ParentVertLocX
+        public int ParentConnectLoc
         {
             get
             {
                 if (P1.DrawVert) // line should be drawn from P1
-                    return P1.ParentVertLocX;
+                    return P1.ParentConnectLoc;
                 // line should be drawn from P2
                 if (Vertical)
-                    return P1.High + UNION_JOIN_WIDE + P2.ParentVertLocX;
-                return P1.Wide + UNION_JOIN_WIDE + P2.ParentVertLocX;
+                    return P1.High + UNION_JOIN_WIDE + P2.ParentConnectLoc;
+                return P1.Wide + UNION_JOIN_WIDE + P2.ParentConnectLoc;
             }
         }
 
