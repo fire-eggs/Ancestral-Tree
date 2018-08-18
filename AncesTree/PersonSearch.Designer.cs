@@ -79,6 +79,7 @@
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
             this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView1_ItemSelectionChanged);
+            this.listView1.Enter += new System.EventHandler(this.listView1_Enter);
             // 
             // clmSurname
             // 
@@ -159,7 +160,7 @@
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.flowLayoutPanel1.Size = new System.Drawing.Size(601, 29);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.flowLayoutPanel1.TabIndex = 6;
             this.flowLayoutPanel1.WrapContents = false;
             // 
             // flowLayoutPanel2
@@ -172,7 +173,7 @@
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(601, 29);
-            this.flowLayoutPanel2.TabIndex = 1;
+            this.flowLayoutPanel2.TabIndex = 7;
             this.flowLayoutPanel2.WrapContents = false;
             // 
             // label1
@@ -182,7 +183,7 @@
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 16);
-            this.label1.TabIndex = 5;
+            this.label1.TabIndex = 8;
             this.label1.Text = "label1";
             // 
             // PersonSearch

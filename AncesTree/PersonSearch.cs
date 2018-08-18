@@ -16,6 +16,8 @@ namespace AncesTree
         Forest _tree;
         private ListViewColumnSorter lvwColumnSorter;
 
+        private bool onLoad = true;
+
         public PersonSearch()
         {
             InitializeComponent();
@@ -78,6 +80,8 @@ namespace AncesTree
             foreach (ColumnHeader c in listView1.Columns)
                 c.Width = -1;
             listView1.EndUpdate();
+
+            onLoad = true;
         }
 
         private void InitList()
@@ -201,6 +205,16 @@ namespace AncesTree
         private void button3_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
+            textBox1.Focus();
+        }
+
+        private void listView1_Enter(object sender, EventArgs e)
+        {
+            // For reasons I don't know, the listview insists on grabbing 
+            // initial focus. The filter box needs initial focus.
+            if (onLoad)
+                textBox1.Focus();
+            onLoad = false;
         }
     }
 }
