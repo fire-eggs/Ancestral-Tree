@@ -145,6 +145,11 @@ namespace AncesTree.TreeModel
                 var config = AppSettings<TreeConfiguration>.Load("TreeConfig.jsn");
                 if (!config.Inited)
                     config = DefaultSettings();
+
+                // 20180818 Enforce align as towardRoot: drawing code is currently
+                // dependent on it.
+                config.Align = AlignmentInLevel.TowardsRoot;
+
                 return config;
             }
             catch (Exception)
