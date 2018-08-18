@@ -310,7 +310,14 @@ namespace AncesTree
             {
                 if (parent.Vertical)
                 {
-                    int topX = b1.Left + b1.Width / 2; // TODO may need to adjust for narrower spouse nodes
+                    // Need to determine the left-most node with narrow spouse nodes.
+                    int topX = b1.Left + b1.Width / 2; 
+                    foreach (var node in parent.Spouses)
+                    {
+                        var b2 = drawBounds(node);
+                        topX = Math.Min((b2.Left + b2.Width / 2), topX);
+                    }
+
                     int topY = b1.Bottom;
                     foreach (var node in parent.Spouses)
                     {
