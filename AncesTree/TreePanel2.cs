@@ -351,10 +351,17 @@ namespace AncesTree
         {
             var b1 = drawBounds(parent);
 
-            // Line from right side of parent to half way across the gen. gap
-            int targetX = b1.Right + (gapBetweenLevels / 2);
+            // Line from left side of children to half way across the gen. gap
+            // This *only* works if alignment for nodes is "toward root"!
+            // [because with align==center, narrow children are further right, i.e.
+            // the 'left side of children' is not constant].
+            // 20180818 In theory, getSizeOfLevel could work for calculating this, except
+            // we need to be able to determine a node's level, which doesn't work
+            // right now for 'pseudo' nodes.
+            // e.g. double levelWide = _boxen.getSizeOfLevel(_boxen.getLevelForNode(parent))
+
+            int targetX = -1;
             int startY = b1.Top + b1.Height / 2;
-            _g.DrawLine(_childPen, b1.Right, startY, targetX, startY);
 
             // Determine the top/bottom of the child-line
             int minChildY = int.MaxValue;
@@ -367,6 +374,11 @@ namespace AncesTree
 
                 var b2 = drawBounds(child);
 
+                // Determine the location of the child line relative to the
+                // child left side [requires align == towardroot!]
+                if (targetX == -1)
+                    targetX = b2.Left - gapBetweenLevels / 2;
+
                 int childX = b2.Left;
                 int childY = b2.Top + child.ParentConnectLoc;
 
@@ -375,10 +387,17 @@ namespace AncesTree
 
                 _g.DrawLine(_childPen, targetX, childY, childX, childY);
             }
+
+            // In the case a union has a single child, the horz. from child unlikely to
+            // connect to horz. from union. Draw a vert. connector.
             if (minChildY == maxChildY)
                 _g.DrawLine(_childPen, targetX, minChildY, targetX, startY);
             else
                 _g.DrawLine(_childPen, targetX, minChildY, targetX, maxChildY);
+
+            // TargetX has been calculated, can draw from the parent to the 
+            // child line.
+            _g.DrawLine(_childPen, b1.Right, startY, targetX, startY);
         }
 
         private void DrawChildrenEdgesH(ITreeData parent, int startx, int starty)
@@ -408,7 +427,6 @@ namespace AncesTree
                     continue;
 
                 var b2 = drawBounds(child);
-                //int childX = (int) (b2.Left + b2.Width/2);
                 int childX = b2.Left + child.ParentConnectLoc;
                 int childY = b2.Top;
 
@@ -442,8 +460,8 @@ namespace AncesTree
             // Draw the connector from the spouse-line to the children-line
             int horzLx = x;
             int horzLy = y + UNION_BAR_WIDE / 2;
-            int targetX = b1.Left + b1.Width + (gapBetweenLevels / 2);
-            _g.DrawLine(_childPen, horzLx, horzLy, targetX, horzLy);
+            int targetX = -1; // Need to calculate the child-line loc relative to the children
+                              // NOTE: requires align==towardsroot!
 
             // determine top/bottom of children line
             int minChildY = int.MaxValue;
@@ -459,19 +477,25 @@ namespace AncesTree
                 int childX = b2.Left;
                 int childY = b2.Top + child.ParentConnectLoc;
 
+                if (targetX == -1)
+                    targetX = childX - gapBetweenLevels / 2;
+
                 minChildY = Math.Min(minChildY, childY);
                 maxChildY = Math.Max(maxChildY, childY);
 
                 // connector from child to child-line
                 _g.DrawLine(_childPen, childX, childY, targetX, childY);
             }
-            // the child-line proper
-            _g.DrawLine(_childPen, targetX, minChildY, targetX, maxChildY);
 
             // Union has a single child. Connector from child unlikely to
             // match to connector from union. Draw an extra connector.
             if (minChildY == maxChildY)
                 _g.DrawLine(_childPen, targetX, minChildY, targetX, horzLy);
+            else
+                _g.DrawLine(_childPen, targetX, minChildY, targetX, maxChildY); // the child-line proper
+
+            // union-link to child line
+            _g.DrawLine(_childPen, horzLx, horzLy, targetX, horzLy);
         }
 
         private void paintEdgesH(UnionNode parent)
