@@ -356,9 +356,6 @@ namespace PrintPreview
                 pdlg.PrinterSettings.FromPage = 1;
                 pdlg.PrinterSettings.ToPage = mTotalPages;
 
-                if (pdlg.ShowDialog() != DialogResult.OK)
-                    return;
-
                 // Cute PDF and doPDF 'printers' don't respect the print range values.
                 // They *should* be passed along to the PrintPage method via the
                 // printer settings.
@@ -375,6 +372,9 @@ namespace PrintPreview
                     else
                         OnPrintRangeSet(this, new PageRange(0, 0));
                 }
+
+                if (pdlg.ShowDialog() != DialogResult.OK)
+                    return;
             }
             try
             {
@@ -397,17 +397,28 @@ namespace PrintPreview
             PageSetupDialog.Document = mDocument;
             if (PageSetupDialog.ShowDialog() == DialogResult.OK)
             {
-                //PossiblePrinterChange(); 
                 printPreviewControl1.InvalidatePreview();
             }
         }
 
         private void tsBtnPrinterSettings_Click(object sender, EventArgs e)
         {
-            PrintDialog.Document = mDocument;
-            DialogResult result = PrintDialog.ShowDialog();
+            var pdlg = PrintDialog;
+            pdlg.Document = mDocument;
+            pdlg.AllowSomePages = true;
+            pdlg.PrinterSettings.FromPage = 1;
+            pdlg.PrinterSettings.ToPage = mTotalPages;
+            pdlg.ShowDialog();
+
+            if (OnPrintRangeSet != null)
+            {
+                if (pdlg.PrinterSettings.PrintRange == PrintRange.SomePages)
+                    OnPrintRangeSet(this, new PageRange(pdlg.PrinterSettings.FromPage, pdlg.PrinterSettings.ToPage));
+                else
+                    OnPrintRangeSet(this, new PageRange(0, 0));
+            }
+
             Document = mDocument;
-            //PossiblePrinterChange(); //printPreviewControl1.InvalidatePreview(); // KBR user may have changed printers
         }
 
         #endregion

@@ -108,6 +108,9 @@
     <Compile Include="TreePanel2.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TreePrintDoc.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="Controls\PenStyle.resx">
       <DependentUpon>PenStyle.cs</DependentUpon>
     </EmbeddedResource>

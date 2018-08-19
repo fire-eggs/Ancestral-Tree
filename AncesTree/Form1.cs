@@ -12,8 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-// ReSharper disable InconsistentNaming
-
 
 namespace AncesTree
 {
@@ -294,12 +292,8 @@ namespace AncesTree
                     break;
             }
 
-            using (Bitmap b = new Bitmap(treePanel1.Width, treePanel1.Height))
+            using (var b = drawToImage())
             {
-                using (Graphics g = Graphics.FromImage(b))
-                {
-                    treePanel1.drawTree(g);
-                }
                 b.Save(_sfd.FileName, iFormat);
             }
         }
@@ -339,9 +333,6 @@ namespace AncesTree
             }
         }
 
-        private int pageIndex;
-        private int _maxPages;
-
         private void previewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var previewDlg = new EnhancedPrintPreviewDialog();
@@ -349,77 +340,32 @@ namespace AncesTree
             previewDlg.ShowPrinterSettingsButton = true;
             previewDlg.ShowPrinterSettingsBeforePrint = true;
 
-            previewDlg.OnPrintRangeSet += PreviewDlg_OnPrintRangeSet;
-
-            var pd = new PrintDocument();
-            if (_pageSettings != null)
-                pd.DefaultPageSettings = _pageSettings;
-            if (_printSettings != null)
-                pd.PrinterSettings = _printSettings;
-
-            pd.BeginPrint += Pd_BeginPrint;
-            pd.PrintPage += Pd_PrintPage;
-            pd.EndPrint += Pd_EndPrint;
-            previewDlg.Document = pd;
-            previewDlg.Owner = this;
-            previewDlg.StartPosition = FormStartPosition.CenterParent;
-            previewDlg.ShowDialog();
-        }
-
-        private void Pd_EndPrint(object sender, PrintEventArgs e)
-        {
-            PrintBmp.Dispose();
-            PrintBmp = null;
-        }
-
-        private void Pd_BeginPrint(object sender, PrintEventArgs e)
-        {
-            pageIndex = _startPage == 0 ? 0 : _startPage-1;
-            if (PrintBmp == null)
-                startPrint();
-        }
-
-        private int _startPage;
-        private int _endPage;
-
-        private void PreviewDlg_OnPrintRangeSet(object sender, EnhancedPrintPreviewDialog.PageRange newValue)
-        {
-            _startPage = newValue.From;
-            _endPage = newValue.To;
-        }
-
-
-        private Bitmap PrintBmp;
-
-        private void startPrint()
-        {
-            PrintBmp = new Bitmap(treePanel1.Width, treePanel1.Height);
-            using (Graphics g = Graphics.FromImage(PrintBmp))
+            using (var printBmp = drawToImage())
             {
-                treePanel1.drawTree(g);
+                var pd = new TreePrintDoc(printBmp);
+
+                previewDlg.OnPrintRangeSet += pd.OnPrintRangeSet;
+
+                if (_pageSettings != null)
+                    pd.DefaultPageSettings = _pageSettings;
+                if (_printSettings != null)
+                    pd.PrinterSettings = _printSettings;
+
+                previewDlg.Document = pd;
+                previewDlg.Owner = this;
+                previewDlg.StartPosition = FormStartPosition.CenterParent;
+                previewDlg.ShowDialog();
             }
         }
 
-        private void Pd_PrintPage(object sender, PrintPageEventArgs e)
+        private Bitmap drawToImage()
         {
-            var printArea = e.MarginBounds;
-
-            int maxW = (int)Math.Ceiling((double)treePanel1.Width / e.MarginBounds.Width);
-            int maxY = (int)Math.Ceiling((double)treePanel1.Height / e.MarginBounds.Height);
-            if (_maxPages == 0)
-                _maxPages = maxW * maxY;
-
-            int stopPrint = _endPage == 0 ? _maxPages : _endPage;
-
-            int x = pageIndex % maxW;
-            int y = pageIndex / maxW;
-
-            var thisRect = new Rectangle(x * printArea.Width, y * printArea.Height, printArea.Width, printArea.Height);
-
-            e.Graphics.DrawImage(PrintBmp, printArea, thisRect, GraphicsUnit.Pixel);
-
-            pageIndex++;
-            e.HasMorePages = pageIndex < stopPrint;
+            var bmp = new Bitmap(treePanel1.Width, treePanel1.Height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                treePanel1.drawTree(g);
+            }
+            return bmp;
         }
 
         private PageSettings _pageSettings;
@@ -439,8 +385,7 @@ namespace AncesTree
         {
             var pd = new PrintDocument();
             PrintDialog pdlg = new PrintDialog();
-            pdlg.AllowSomePages = true; // Need to specify page range somehow?
-//            pdlg.AllowCurrentPage = true;
+            pdlg.AllowSomePages = true; // TODO Need to specify page range somehow
             pdlg.Document = pd;
             pdlg.ShowDialog();
 
