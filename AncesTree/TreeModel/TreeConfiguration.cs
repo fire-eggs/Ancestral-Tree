@@ -55,17 +55,20 @@ namespace AncesTree.TreeModel
             set { gapBetweenNodes = value; }
         }
 
+        // These two properties modify the base class, therefore not trivial!
+#pragma warning disable S2292 // Trivial properties should be auto-implemented
         public Location RootLoc
         {
             get { return location; }
             set { location = value; }
         }
 
-        public AlignmentInLevel Align
+        public AlignmentInLevel Align 
         {
             get { return alignmentInLevel; }
             set { alignmentInLevel = value; }
         }
+#pragma warning restore S2292 // Trivial properties should be auto-implemented
 
         public int SpouseGap { get; set; }
 

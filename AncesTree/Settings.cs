@@ -1,10 +1,7 @@
-﻿using AncesTree.Controls;
-using AncesTree.TreeLayout;
+﻿using AncesTree.TreeLayout;
 using AncesTree.TreeModel;
 using GEDWrap;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -44,6 +41,8 @@ namespace AncesTree
             btnFemaleColor.Value = _settings.FemaleColor;
             btnUnknownColor.Value = _settings.UnknownColor;
             btnBackColor.Value = _settings.BackColor;
+
+            chkVertical.Checked = _settings.RootLoc == Configuration.Location.Left;
         }
 
         private void OnColorChange(object sender, ColorValues newValue)
@@ -171,6 +170,12 @@ namespace AncesTree
         {
             _settings = TreeConfiguration.DefaultSettings();
             LoadSettings();
+            Rebuild();
+        }
+
+        private void chkVertical_CheckedChanged(object sender, EventArgs e)
+        {
+            _settings.RootLoc = chkVertical.Checked ? Configuration.Location.Left : Configuration.Location.Top;
             Rebuild();
         }
     }
