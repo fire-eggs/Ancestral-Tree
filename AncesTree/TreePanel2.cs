@@ -544,13 +544,29 @@ namespace AncesTree
 
             int midXDest = destRect.Left + (destRect.Right - destRect.Left) / 2;
             int midXthis = thisRect.Left + (thisRect.Right - thisRect.Left) / 2;
-            int midmidX = midXDest + (midXthis - midXDest) / 2;
 
+            int yThis = thisRect.Bottom;
+            int yDest = destRect.Bottom;
+
+            int midmidX = midXDest + (midXthis - midXDest) / 2;
             int midY = Math.Max(thisRect.Bottom, destRect.Bottom) + (gapBetweenLevels / 2) - 5; // TODO tweak/make constant
 
-            Point p1 = new Point(midXthis, thisRect.Bottom);
+            if (union.Vertical)
+            {
+                midXthis = thisRect.Right;
+                midXDest = destRect.Right;
+
+                yThis = thisRect.Top + thisRect.Height / 2;
+                yDest = destRect.Top + destRect.Height / 2;
+
+                midmidX = Math.Max(midXthis, midXDest) + (gapBetweenLevels / 2) - 5; // TODO tweak/make constant
+                midY = Math.Min(yThis, yDest) + Math.Abs(yThis - yDest) / 2;
+            }
+
+            // Curve points from middle of two boxes to a point half-way between; said point below/right of boxes
+            Point p1 = new Point(midXthis, yThis);
             Point p2 = new Point(midmidX, midY);
-            Point p3 = new Point(midXDest, destRect.Bottom);
+            Point p3 = new Point(midXDest, yDest);
 
             _g.DrawRectangle(_duplPen, thisRect);
             _g.DrawRectangle(_duplPen, destRect);
