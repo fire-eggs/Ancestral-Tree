@@ -3,6 +3,9 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
+// TODO consider splitting this into 'layout' and 'drawing' configurations? 
+// Layout configuration is as defined by DefaultConfiguration.
+
 namespace AncesTree.TreeModel
 {
     public struct LineStyleValues
@@ -28,7 +31,7 @@ namespace AncesTree.TreeModel
         }
     }
 
-    public struct ColorValues // TODO Json deserialize problem
+    public struct ColorValues
     {
         public Int32 ARGB;
         public Color GetColor() { return Color.FromArgb(ARGB);}

@@ -2,7 +2,7 @@
 {
     /**
      * Provides the extent (width and height) of a tree node.
-     * <p>
+     * 
      * Also see <a href="package-summary.html">this overview</a>.
      * 
      * @author Udo Borkowski (ub@abego.org)

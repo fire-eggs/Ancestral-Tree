@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using AncesTree.TreeLayout;
 
-namespace AncesTree.TreeModel
+namespace AncesTree.TreeLayout
 {
     /**
      * Provides a generic implementation for the {@link org.abego.treelayout.TreeForTreeLayout}

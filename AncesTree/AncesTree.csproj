@@ -100,7 +100,7 @@
     <Compile Include="TreeLayout\TreeForTreeLayout.cs" />
     <Compile Include="TreeLayout\TreeLayout.cs" />
     <Compile Include="TreeModel\DefaultConfiguration.cs" />
-    <Compile Include="TreeModel\DefaultTreeForTreeLayout.cs" />
+    <Compile Include="TreeLayout\DefaultTreeForTreeLayout.cs" />
     <Compile Include="TreeModel\NodeExtents.cs" />
     <Compile Include="TreeModel\TreeBuild.cs" />
     <Compile Include="TreeModel\TreeConfiguration.cs" />

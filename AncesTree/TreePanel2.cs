@@ -1,4 +1,9 @@
-﻿using AncesTree.TreeLayout;
+﻿/*
+ * A panel drawing an abego tree. Provides hover/click events for
+ * tree nodes.
+ */
+
+using AncesTree.TreeLayout;
 using AncesTree.TreeModel;
 using System;
 using System.Collections.Generic;
@@ -10,10 +15,13 @@ using System.Windows;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
 
+// TODO are duplicated nodes for multi-marriage getting connected? i.e. where is 'DrawDuplicateNode(PersonNode)'?
+
 namespace AncesTree
 {
     public class TreePanel2 : Panel
     {
+        #region Provided Events
         public delegate void NodeClick(object sender, ITreeData node);
         public delegate void NodeHover(object sender, ITreeData node);
 
@@ -21,6 +29,7 @@ namespace AncesTree
         public event NodeClick OnNodeClick;
         [Browsable(true)]
         public event NodeHover OnNodeHover;
+        #endregion
 
         private TreeConfiguration _config;
 
@@ -36,23 +45,28 @@ namespace AncesTree
             MouseMove += TreePanel2_MouseMove;
         }
 
+        #region Mouse Event Handling
         int lastX = -1;
         int lastY = -1;
         private void TreePanel2_MouseMove(object sender, MouseEventArgs e)
         {
-            if (Math.Abs(lastX - e.X) < 3 && Math.Abs(lastY - e.Y) < 3)
+            if (Math.Abs(lastX - e.X) < 3 && Math.Abs(lastY - e.Y) < 3) // ignore minor move delta
                 return;
             lastX = e.X;
             lastY = e.Y;
 
-            var node = findNodeByPoint(e.X - 8, e.Y - 8); // WHY is this delta necessary???
-            UnionNode un = node as UnionNode;
-            if (un != null)
-            {
-                node = getPersonFromUnion(un, e.X - 8, e.Y - 8);
-            }
-            OnNodeHover?.Invoke(this, node);
+            ITreeData node = findPersonFromPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeHover?.Invoke(this, node);
         }
+
+        private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
+        {
+            ITreeData node = findPersonFromPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeClick?.Invoke(this, node);
+        }
+        #endregion
 
         private ITreeData findNodeByPoint(int x0, int y0)
         {
@@ -94,17 +108,22 @@ namespace AncesTree
             return null;
         }
 
-        private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Determine which Person box is under the mouse cursor. I.e. finds which person in
+        /// a UnionNode, or the PersonNode.
+        /// </summary>
+        /// <param name="X">mouse cursor x pos</param>
+        /// <param name="Y">mouse cursor y pos</param>
+        /// <returns></returns>
+        private ITreeData findPersonFromPoint(int X, int Y)
         {
-            ITreeData node = findNodeByPoint(e.X-8, e.Y-8); // WHY is this delta necessary?
+            ITreeData node = findNodeByPoint(X - 8, Y - 8); // TODO WHY is this delta necessary?
             UnionNode un = node as UnionNode;
             if (un != null)
             {
-                node = getPersonFromUnion(un, e.X-8, e.Y-8);
+                node = getPersonFromUnion(un, X - 8, Y - 8);
             }
-
-            if (node != null)
-                OnNodeClick?.Invoke(this, node);
+            return node;
         }
 
         public void drawTree(Graphics g)
@@ -147,7 +166,7 @@ namespace AncesTree
             drawTree(e.Graphics);
         }
 
-        private int _margin = 10;
+        private int _margin = 10; // TODO from configuration
 
         public int TreeMargin
         {
@@ -263,6 +282,7 @@ namespace AncesTree
                     paintABox(bar.P2, box2);
                 }
 
+                // debugging
                 //using (var pen = new Pen(Color.Magenta))
                 //    _g.DrawRectangle(pen, box);
             }
@@ -284,14 +304,14 @@ namespace AncesTree
                 var p = parent as PersonNode;
                 // Don't draw the fake for multi-marriage at root
                 if (p.Text != " " || p.Who != null)
-                    paintEdges(parent as PersonNode);
+                    paintPersonEdges(parent as PersonNode);
             }
             else
             {
                 if (parent.Vertical)
-                    paintEdgesV(parent as UnionNode);
+                    paintUnionEdgesV(parent as UnionNode);
                 else
-                    paintEdgesH(parent as UnionNode);
+                    paintUnionEdgesH(parent as UnionNode);
             }
             foreach (var child in getChildren(parent))
             {
@@ -299,7 +319,7 @@ namespace AncesTree
             }
         }
 
-        private void paintEdges(PersonNode parent)
+        private void paintPersonEdges(PersonNode parent)
         {
             var b1 = drawBounds(parent);
 
@@ -451,7 +471,7 @@ namespace AncesTree
                 _g.DrawLine(_childPen, minChildX, targetY, startx, targetY);
         }
 
-        private void paintEdgesV(UnionNode parent)
+        private void paintUnionEdgesV(UnionNode parent)
         {
             Rectangle b1 = drawBounds(parent);
 
@@ -461,7 +481,7 @@ namespace AncesTree
             _g.DrawLine(_spousePen, x, y, x, y + UNION_BAR_WIDE);
 
             // nothing further to do if this is a "duplicate" or there are no children
-            if (DrawDuplicateUnion(parent) || !hasChildren(parent))
+            if (DrawDuplicateNode(parent) || !hasChildren(parent))
                 return;
 
             // Draw the connector from the spouse-line to the children-line
@@ -505,7 +525,7 @@ namespace AncesTree
             _g.DrawLine(_childPen, horzLx, horzLy, targetX, horzLy);
         }
 
-        private void paintEdgesH(UnionNode parent)
+        private void paintUnionEdgesH(UnionNode parent)
         {
             // Draw edge connectors associated with a Union. This is the horizontal
             // (root at top) variant.
@@ -518,7 +538,7 @@ namespace AncesTree
             _g.DrawLine(_spousePen, x, y, x + UNION_BAR_WIDE, y);
 
             // if this is a duplicate, or there are no children, we're done
-            if (DrawDuplicateUnion(parent) || !hasChildren(parent))
+            if (DrawDuplicateNode(parent) || !hasChildren(parent))
                 return;
 
             // Top point - vertical line from connector to child line
@@ -528,10 +548,13 @@ namespace AncesTree
             DrawChildrenEdgesH(parent, vertLx, vertLy);
         }
 
-        private bool DrawDuplicateUnion(UnionNode union)
+        /// <summary>
+        /// Draw a connection between two, duplicated union nodes
+        /// </summary>
+        /// <param name="union"></param>
+        /// <returns></returns>
+        private bool DrawDuplicateNode(UnionNode union)
         {
-            // Draw a connection between two, duplicated unions
-
             // This is not a duplicate, nothing to do
             if (union.DupNode == null)
                 return false;

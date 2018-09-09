@@ -9,24 +9,46 @@ using System.Windows.Forms;
 
 namespace AncesTree.TreeModel
 {
+    /// <summary>
+    /// Common drawing properties for the tree chart.
+    /// </summary>
     public interface ITreeData : ITreeNode
     {
-        int Wide { get; }
-        int High { get; }
+        /// <summary>
+        /// The location for the 'parent connector'. For a horizontal chart, this is the spot
+        /// along the top of the node. For a vertical chart, this is the spot along the right
+        /// edge of the node. This is not always the 'center' of the node, as the parent
+        /// connector is to be drawn to the 'blood relation' child inside a Union.
+        /// </summary>
         int ParentConnectLoc { get; }
+
+        // Is this chart vertical?
+        // TODO take from settings?
         bool Vertical { get; }
+
+        // This node might have a duplicate elsewhere
+        ITreeData DupNode { get; set; }
     }
 
     public class PersonNode : ITreeData
     {
-        // Layout properties
+        #region Layout properties
 
         public int Wide { get; private set; }
         public int High { get; private set; }
-        public int ParentConnectLoc { get; private set; }
         public bool IsReal { get; set; }
 
+        #endregion
+
+        #region Common Drawing properties
+
+        public int ParentConnectLoc { get; private set; }
+
         public bool Vertical { get; private set; }
+
+        public ITreeData DupNode { get; set; }
+
+        #endregion
 
         public Person Who { get; set; }
 
@@ -43,16 +65,13 @@ namespace AncesTree.TreeModel
             IsReal = true;
         }
 
-        // In the multi-marriage case, this person might have a duplicate elsewhere
-        public ITreeData DupNode { get; set; }
-
-        // Drawing properties
         public string Text { get; set; }
 
         public Color BackColor { get; set; }
 
         public bool DrawVert { get; set; }
 
+        #region multi-marriage support
         private List<ITreeData> _multSpouses;
 
         public void AddSpouse(ITreeData node)
@@ -70,14 +89,14 @@ namespace AncesTree.TreeModel
         public bool HasSpouses { get { return _multSpouses != null; } }
 
         public List<ITreeData> Spouses { get { return _multSpouses; } }
+
+        #endregion
     }
 
     // A node consisting of two PersonNodes, connected with a line.
     public class UnionNode : ITreeData
     {
-        public const int UNION_JOIN_WIDE = 20;     // TODO union-join-width from settings
-
-        public bool Vertical { get; private set; }
+        #region Layout Properties
 
         public int Wide
         {
@@ -99,6 +118,14 @@ namespace AncesTree.TreeModel
             }
         }
 
+        public bool IsReal { get; set; }
+
+        #endregion
+
+        #region Common Drawing properties
+
+        public bool Vertical { get; private set; }
+
         public int ParentConnectLoc
         {
             get
@@ -112,15 +139,17 @@ namespace AncesTree.TreeModel
             }
         }
 
-        public bool IsReal { get; set; }
+        public ITreeData DupNode { get; set; }
+        #endregion
+
+
+        public const int UNION_JOIN_WIDE = 20;     // TODO union-join-width from settings
 
         public PersonNode P1 { get; set; }
 
         public PersonNode P2 { get; set; }
 
         public string UnionId { get; set; }
-
-        public ITreeData DupNode { get; set; }
 
         public UnionNode(PersonNode p1, PersonNode p2, string unionId, bool vertical)
         {
@@ -155,11 +184,12 @@ namespace AncesTree.TreeModel
 
         public ITreeData Create(Person p, string s, Color clr, bool isSpouse = false)
         {
+            // MeasureString and DrawText will behave as desired for multiline text
+            // if the Environment.NewLine is used for line separation.
             var s2 = s.Replace("\n", Environment.NewLine);
             SizeF txtSz = _graphics.MeasureString(s2,
                 isSpouse ? _spouseFont : _mainFont,
                 1000, StringFormat.GenericDefault);
-                //StringFormat.GenericTypographic);
 
             int w = (int) (txtSz.Width + 1);
             int h = (int) (txtSz.Height);

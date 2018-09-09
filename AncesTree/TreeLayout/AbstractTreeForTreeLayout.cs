@@ -1,12 +1,39 @@
-﻿using System;
+﻿/*
+The C# port of the abego TreeLayout project. Extended by Kevin Routley
+for the Ancestral-Tree project.
+
+The abego TreeLayout project is distributed under BSD License:
+http://treelayout.sourceforge.net/
+https://github.com/abego/treelayout
+
+The C# port:
+https://sourceforge.net/projects/citexplore-code-treelayout/
+
+The Ancestral-Tree change is to add support for "not-real" nodes. "Real"
+and "not-real" nodes are treated the same except that "not-real" nodes
+are NOT to be centered relative to their parents.
+*/
+
+// TODO need better name than 'IsReal'
+// TODO clean up all java-style doc to .NET doc
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AncesTree.TreeLayout
 {
+    /// <summary>
+    /// This is the minimum interface required for the tree layout to function.
+    /// 
+    /// The concrete implementation of the interface may have any additional
+    /// properties required for drawing purposes.
+    /// </summary>
     public interface ITreeNode
     {
-        bool IsReal { get; set; }
+        int Wide { get; }
+        int High { get; }
+        bool IsReal { get; }
     }
 
     /**
@@ -70,7 +97,6 @@ namespace AncesTree.TreeLayout
             return getChildrenList(node).Count == 0;
         }
 
-
         public bool isChildOfParent(TTreeNode node, TTreeNode parentNode)
         {
             return Object.ReferenceEquals(getParent(node), parentNode);
@@ -82,26 +108,37 @@ namespace AncesTree.TreeLayout
             return getChildrenList(node);
         }
 
-
         public IEnumerable<TTreeNode> getChildrenReverse(TTreeNode node)
         {
             return getChildren(node).Reverse();
-            //return IterableUtil.createReverseIterable(getChildrenList(node));
         }
 
-
+        /// <summary>
+        /// Acquire the first child node of a given node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         public TTreeNode getFirstChild(TTreeNode parentNode)
         {
             return getChildrenList(parentNode)[0];
         }
 
+        /// <summary>
+        /// Acquire the last child node of a given node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         public TTreeNode getLastChild(TTreeNode parentNode)
         {
             var list = getChildrenList(parentNode);
             return list[list.Count - 1];
-            //return ListUtil.getLast(getChildrenList(parentNode));
         }
 
+        /// <summary>
+        /// Acquire the first real child node of a given node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         public TTreeNode getFirstRealChild(TTreeNode parentNode)
         {
             var list = getChildrenList(parentNode);
@@ -113,6 +150,11 @@ namespace AncesTree.TreeLayout
             return default(TTreeNode);
         }
 
+        /// <summary>
+        /// Acquire the last real child node of a given node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         public TTreeNode getLastRealChild(TTreeNode parentNode)
         {
             var list = getChildrenReverse(parentNode);

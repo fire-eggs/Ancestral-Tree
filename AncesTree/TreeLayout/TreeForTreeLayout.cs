@@ -59,8 +59,6 @@ namespace AncesTree.TreeLayout
 
         /**
          * Returns the first child of a parent node.
-         * <p>
-         * Time Complexity: O(1)
          * 
          * @param parentNode
          *            [!isLeaf(parentNode)]
@@ -70,9 +68,6 @@ namespace AncesTree.TreeLayout
 
         /**
          * Returns the last child of a parent node.
-         * <p>
-         * 
-         * Time Complexity: O(1)
          * 
          * @param parentNode
          *            [!isLeaf(parentNode)]
@@ -80,7 +75,18 @@ namespace AncesTree.TreeLayout
          */
         TreeNode getLastChild(TreeNode parentNode);
 
+        /// <summary>
+        /// Returns the first real child of a parent node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         TreeNode getFirstRealChild(TreeNode parentNode);
+
+        /// <summary>
+        /// Returns the last real child of a parent node.
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <returns></returns>
         TreeNode getLastRealChild(TreeNode parentNode);
     }
 }
