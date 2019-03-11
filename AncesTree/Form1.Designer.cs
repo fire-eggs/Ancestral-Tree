@@ -34,6 +34,10 @@
             this.loadGEDCOMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pageSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.personSel = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -46,15 +50,13 @@
             this.btnConfig = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.previewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pageSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spinMaxGen = new System.Windows.Forms.NumericUpDown();
             this.treePanel1 = new AncesTree.TreePanel2();
-            this.printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinMaxGen)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -97,6 +99,37 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // printToolStripMenuItem
+            // 
+            this.printToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.previewToolStripMenuItem,
+            this.pageSettingsToolStripMenuItem,
+            this.printerToolStripMenuItem});
+            this.printToolStripMenuItem.Name = "printToolStripMenuItem";
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.printToolStripMenuItem.Text = "Print";
+            // 
+            // previewToolStripMenuItem
+            // 
+            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
+            this.previewToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.previewToolStripMenuItem.Text = "Print Preview...";
+            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
+            // 
+            // pageSettingsToolStripMenuItem
+            // 
+            this.pageSettingsToolStripMenuItem.Name = "pageSettingsToolStripMenuItem";
+            this.pageSettingsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.pageSettingsToolStripMenuItem.Text = "Page Settings...";
+            this.pageSettingsToolStripMenuItem.Click += new System.EventHandler(this.pageSettingsToolStripMenuItem_Click);
+            // 
+            // printerToolStripMenuItem
+            // 
+            this.printerToolStripMenuItem.Name = "printerToolStripMenuItem";
+            this.printerToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.printerToolStripMenuItem.Text = "Printer Setup...";
+            this.printerToolStripMenuItem.Click += new System.EventHandler(this.printerToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -141,9 +174,10 @@
             this.flowLayoutPanel2.Controls.Add(this.btn100Percent);
             this.flowLayoutPanel2.Controls.Add(this.btnSaveToImage);
             this.flowLayoutPanel2.Controls.Add(this.btnConfig);
+            this.flowLayoutPanel2.Controls.Add(this.spinMaxGen);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(676, 29);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(727, 29);
             this.flowLayoutPanel2.TabIndex = 2;
             this.flowLayoutPanel2.WrapContents = false;
             // 
@@ -225,29 +259,23 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // printToolStripMenuItem
+            // spinMaxGen
             // 
-            this.printToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.previewToolStripMenuItem,
-            this.pageSettingsToolStripMenuItem,
-            this.printerToolStripMenuItem});
-            this.printToolStripMenuItem.Name = "printToolStripMenuItem";
-            this.printToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.printToolStripMenuItem.Text = "Print";
-            // 
-            // previewToolStripMenuItem
-            // 
-            this.previewToolStripMenuItem.Name = "previewToolStripMenuItem";
-            this.previewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.previewToolStripMenuItem.Text = "Print Preview...";
-            this.previewToolStripMenuItem.Click += new System.EventHandler(this.previewToolStripMenuItem_Click);
-            // 
-            // pageSettingsToolStripMenuItem
-            // 
-            this.pageSettingsToolStripMenuItem.Name = "pageSettingsToolStripMenuItem";
-            this.pageSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.pageSettingsToolStripMenuItem.Text = "Page Settings...";
-            this.pageSettingsToolStripMenuItem.Click += new System.EventHandler(this.pageSettingsToolStripMenuItem_Click);
+            this.spinMaxGen.Location = new System.Drawing.Point(679, 3);
+            this.spinMaxGen.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.spinMaxGen.Name = "spinMaxGen";
+            this.spinMaxGen.Size = new System.Drawing.Size(45, 20);
+            this.spinMaxGen.TabIndex = 8;
+            this.spinMaxGen.Value = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.spinMaxGen.ValueChanged += new System.EventHandler(this.spinMaxGen_ValueChanged);
             // 
             // treePanel1
             // 
@@ -259,13 +287,6 @@
             this.treePanel1.TabIndex = 0;
             this.treePanel1.TreeMargin = 10;
             this.treePanel1.Zoom = 1F;
-            // 
-            // printerToolStripMenuItem
-            // 
-            this.printerToolStripMenuItem.Name = "printerToolStripMenuItem";
-            this.printerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.printerToolStripMenuItem.Text = "Printer Setup...";
-            this.printerToolStripMenuItem.Click += new System.EventHandler(this.printerToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -288,6 +309,7 @@
             this.flowLayoutPanel2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinMaxGen)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -317,6 +339,7 @@
         private System.Windows.Forms.ToolStripMenuItem previewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pageSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printerToolStripMenuItem;
+        private System.Windows.Forms.NumericUpDown spinMaxGen;
     }
 }
 

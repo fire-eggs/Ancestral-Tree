@@ -1,12 +1,6 @@
 ﻿using GEDWrap;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AncesTree
@@ -93,6 +87,7 @@ namespace AncesTree
                 var ld = new ListViewItem(p.Surname);
                 ld.SubItems.Add(p.Given);
                 ld.SubItems.Add(p.BirthDate == null ? "?" : p.BirthDate.Year.ToString());
+                ld.SubItems.Add(p.DeathDate == null ? "?" : p.DeathDate.Year.ToString());
                 ld.SubItems.Add(p.Id);
 
                 _fullList.Add(ld);

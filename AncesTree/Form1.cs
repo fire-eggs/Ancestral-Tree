@@ -153,6 +153,9 @@ namespace AncesTree
         private void TreePerson(Person val)
         {
             var config = TreeConfiguration.LoadConfig();
+
+            config.MaxDepth = (int)spinMaxGen.Value;
+
             var tree = TreeBuild.BuildTree(treePanel1, config, val);
 
             // create the NodeExtentProvider for TextInBox nodes
@@ -220,8 +223,9 @@ namespace AncesTree
             {
                 Person p = _gedtrees.PersonById(indiId);
                 string byear = p.BirthDate == null ? "?" : p.BirthDate.Year.ToString();
+                string dyear = p.DeathDate == null ? "?" : p.DeathDate.Year.ToString();
 
-                var text = string.Format("{0},{1} [b. {3}] \t ({2})", p.Surname, p.Given, indiId, byear);
+                var text = string.Format("{0},{1} [b. {3} d. {4}] \t ({2})", p.Surname, p.Given, indiId, byear, dyear);
                 comboNames.Add(text);
                 comboPersons.Add(text, p);
             }
@@ -390,6 +394,12 @@ namespace AncesTree
             pdlg.ShowDialog();
 
             _printSettings = pd.PrinterSettings;
+        }
+
+        private void spinMaxGen_ValueChanged(object sender, EventArgs e)
+        {
+            // TODO force rebuild
+            personSel_SelectedIndexChanged(null, null); 
         }
     }
 }

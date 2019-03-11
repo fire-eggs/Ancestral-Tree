@@ -90,6 +90,8 @@ namespace AncesTree.TreeModel
         public ColorValues BackColor { get; set; }
         public bool RootOnLeft { get { return RootLoc == Location.Left; } }
 
+        public int MaxDepth { get; set; }
+
         public static TreeConfiguration DefaultSettings()
         {
             var config = new TreeConfiguration();

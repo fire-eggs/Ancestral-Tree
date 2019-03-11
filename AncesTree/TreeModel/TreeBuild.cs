@@ -14,12 +14,15 @@ namespace AncesTree.TreeModel
         private static DefaultTreeForTreeLayout<ITreeData> _tree;
         private static Dictionary<string, ITreeData> _unionSet;
         private static TreeConfiguration _config;
+        private static int _genDepth;
 
         public static TreeForTreeLayout<ITreeData> BuildTree(Control ctl, TreeConfiguration config, Person root)
         {
             _config = config;
+
             _nf = new NodeFactory(ctl, _config.MajorFont.GetFont(), _config.MinorFont.GetFont(), _config.RootOnLeft);
             _unionSet = new Dictionary<string, ITreeData>();
+            _genDepth = 1;
 
             ITreeData treeRoot;
             switch (root.SpouseIn.Count)
@@ -32,7 +35,7 @@ namespace AncesTree.TreeModel
                     break;
                 default:
                     // Multi-marriage at the root.
-                    treeRoot = _nf.Create(null, " ", Color.GreenYellow);
+                    treeRoot = _nf.Create(null, " ", Color.GreenYellow); // this is a "pseudo-node" which doesn't get drawn
                     _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
                     MultiMarriage(treeRoot, root);
                     break;
@@ -64,7 +67,7 @@ namespace AncesTree.TreeModel
                 return; // person has no spouse/child
 
             var who = parent.P1.Who ?? parent.P2.Who;
-            if (who == null)
+            if (who == null) // both parents empty, shouldn't get here!
                 return;
 
             // This union might have already been added to the
@@ -76,8 +79,14 @@ namespace AncesTree.TreeModel
                 parent.DupNode = dup;
                 return;
             }
-
             _unionSet.Add(parent.UnionId, parent);
+
+
+            // About to start the next layer down the tree. punt if we've hit the limit
+            if (_genDepth >= _config.MaxDepth)
+                return;
+
+            _genDepth = _genDepth + 1;
 
             Union marr = who.SpouseIn.First();
             foreach (var child in marr.Childs)
@@ -95,6 +104,8 @@ namespace AncesTree.TreeModel
                         break;
                 }
             }
+
+            _genDepth = _genDepth - 1;
         }
 
         private static void MultiMarriage(ITreeData parent, Person who)
@@ -111,6 +122,7 @@ namespace AncesTree.TreeModel
 
             foreach (var marr in who.SpouseIn)
             {
+                // Add each spouse as a pseudo-child of the 'parent'
                 Person spouseP = marr.Spouse(who);
                 PersonNode node = (PersonNode)_nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
                 node.IsReal = false;
@@ -129,13 +141,18 @@ namespace AncesTree.TreeModel
                 else
                 {
                     _unionSet.Add(marr.Id, nodeP);
-                    GrowTree(node, marr);
+
+                    // here we're about to start the next level, punt if limit reached
+                    if (_genDepth < _config.MaxDepth) 
+                        GrowTree(node, marr);
                 }
             }
         }
 
         private static void GrowTree(ITreeData parent, Union marr)
         {
+           _genDepth = _genDepth + 1;
+
             // In the multi-marriage situation, we need to add
             // the children of a *specific* marriage as child-nodes
             // of the parent.
@@ -154,6 +171,8 @@ namespace AncesTree.TreeModel
                         break;
                 }
             }
+
+           _genDepth = _genDepth - 1;
         }
 
         public static string StringForNode(Person who)
@@ -162,10 +181,9 @@ namespace AncesTree.TreeModel
                 return string.Format("{3}?{3}?-?", "", "", "", Environment.NewLine);
             var byr = who.BirthDate == null ? "?" : who.BirthDate.Year.ToString();
 
-            // TODO need DeathDate from GedWrap!
-            //var dyr = who.DeathDate == null ? "?" : who.DeathDate.Year.ToString();
+            var dyr = who.DeathDate == null ? "?" : who.DeathDate.Year.ToString();
 
-            return string.Format("{0}{3}{1}{3}{2}", who.Given, who.Surname, byr, Environment.NewLine);
+            return string.Format("{0}{3}{1}{3}{2}-{4}", who.Given, who.Surname, byr, Environment.NewLine, dyr);
         }
 
         public static Color ColorForNode(Person who)
