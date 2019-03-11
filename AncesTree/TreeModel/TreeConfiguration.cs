@@ -137,6 +137,8 @@ namespace AncesTree.TreeModel
             };
 
             config.BackColor = new ColorValues { ARGB = Color.Bisque.ToArgb() };
+
+            config.MaxDepth = 10;
             return config;
         }
 

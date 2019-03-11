@@ -57,7 +57,7 @@ namespace AncesTree
             else
             {
                 var item = listView1.SelectedItems[0];
-                var id = item.SubItems[3].Text;
+                var id = item.SubItems[4].Text;
                 SelectedPerson = _tree.PersonById(id);
                 button1.Enabled = true;
             }
