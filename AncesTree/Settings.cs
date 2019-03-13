@@ -84,9 +84,9 @@ namespace AncesTree
             "0 @I3@ INDI\n1 NAME Richard /Moe/\n1 SEX M\n1 BIRT\n2 DATE 1901\n" + 
             "0 @I4@ INDI\n1 NAME Janet /Moe/\n1 SEX F\n" +
             "0 @I5@ INDI\n1 NAME Margaret /Moe/\n1 SEX F\n1 BIRT\n2 DATE 1910\n" +
-            "0 @I6@ INDI\n1 NAME Thomas /Toe/\n1 SEX M\n" +
-            "0 @I7@ INDI\n1 NAME Billy /Boe/\n1 SEX U\n" +
-            "0 @I8@ INDI\n1 NAME Clarissa /Moe/\n1 SEX F\n" +
+            "0 @I6@ INDI\n1 NAME Thomas /Toe/\n1 SEX M\n1 BIRT\n2 DATE 1935\n" +
+            "0 @I7@ INDI\n1 NAME Billy /Boe/\n1 SEX U\n1 DEAT\n2 DATE 1999\n" +
+            "0 @I8@ INDI\n1 NAME Clarissa /Moe/\n1 SEX F\n1 BIRT\n2 DATE 1905\n1 DEAT\n2 DATE 1989\n" +
             "0 @F1@ FAM\n1 HUSB @I1@\n1 WIFE @I2@\n1 CHIL @I3@\n1 CHIL @I8@\n1 CHIL @I4@\n" +
             "0 @F2@ FAM\n1 HUSB @I3@\n1 WIFE @I4@\n1 CHIL @I5@\n" +
             "0 @F3@ FAM\n1 HUSB @I6@\n1 WIFE @I5@\n" +
