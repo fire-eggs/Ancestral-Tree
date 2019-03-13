@@ -71,6 +71,8 @@ namespace AncesTree.TreeModel
 
         public bool DrawVert { get; set; }
 
+        public int Depth { get; set; }
+
         #region multi-marriage support
         private List<ITreeData> _multSpouses;
 
@@ -182,7 +184,7 @@ namespace AncesTree.TreeModel
             _mainFont.Dispose();
         }
 
-        public ITreeData Create(Person p, string s, Color clr, bool isSpouse = false)
+        public ITreeData Create(Person p, string s, Color clr, int depth, bool isSpouse = false)
         {
             // MeasureString and DrawText will behave as desired for multiline text
             // if the Environment.NewLine is used for line separation.
@@ -196,6 +198,7 @@ namespace AncesTree.TreeModel
             var node = new PersonNode(p, s, w, h, _vertOrient);
             node.BackColor = clr;
             node.DrawVert = !isSpouse; // TODO brother/sister incest: both spouses are children
+            node.Depth = depth;
 
             return node;
         }

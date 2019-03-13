@@ -29,35 +29,35 @@ namespace AncesTree.TreeModel
             {
                 case 0:
                 case 1:
-                    treeRoot = MakeNode(root);
+                    treeRoot = MakeNode(root, _genDepth);
                     _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
                     GrowTree(treeRoot as UnionNode);
                     break;
                 default:
                     // Multi-marriage at the root.
-                    treeRoot = _nf.Create(null, " ", Color.GreenYellow); // this is a "pseudo-node" which doesn't get drawn
+                    treeRoot = _nf.Create(null, " ", Color.GreenYellow, 0); // this is a "pseudo-node" which doesn't get drawn
                     _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
-                    MultiMarriage(treeRoot, root);
+                    MultiMarriage(treeRoot, root, _genDepth);
                     break;
             }
             return _tree;
         }
 
-        private static ITreeData MakeNode(Person who)
+        private static ITreeData MakeNode(Person who, int depth)
         {
             // No spouse/children: make a personnode
             if (who.SpouseIn.Count == 0)
             {
-                return _nf.Create(who, StringForNode(who), ColorForNode(who));
+                return _nf.Create(who, StringForNode(who), ColorForNode(who), depth);
             }
 
             Union marr = who.SpouseIn.First();
 
             // convention of husband-left, wife-right
             var p1 = _nf.Create(marr.Husband, StringForNode(marr.Husband), 
-                ColorForNode(marr.Husband), marr.Husband == null || marr.Husband.Id != who.Id);
+                ColorForNode(marr.Husband), depth, marr.Husband == null || marr.Husband.Id != who.Id);
             var p2 = _nf.Create(marr.Wife, StringForNode(marr.Wife), 
-                ColorForNode(marr.Wife), marr.Wife == null || marr.Wife.Id != who.Id);
+                ColorForNode(marr.Wife), depth, marr.Wife == null || marr.Wife.Id != who.Id);
             return _nf.Create(p1, p2, marr.Id);
         }
 
@@ -95,12 +95,12 @@ namespace AncesTree.TreeModel
                 {
                     case 0:
                     case 1:
-                        ITreeData node = MakeNode(child);
+                        ITreeData node = MakeNode(child, _genDepth);
                         _tree.addChild(parent, node);
                         GrowTree(node as UnionNode);
                         break;
                     default:
-                        MultiMarriage(parent, child);
+                        MultiMarriage(parent, child, _genDepth);
                         break;
                 }
             }
@@ -108,7 +108,7 @@ namespace AncesTree.TreeModel
             _genDepth = _genDepth - 1;
         }
 
-        private static void MultiMarriage(ITreeData parent, Person who)
+        private static void MultiMarriage(ITreeData parent, Person who, int depth)
         {
             // A person has multiple marriages.
             // 1. Make the person a child of the parent.
@@ -117,14 +117,14 @@ namespace AncesTree.TreeModel
             // 2b. Connect each spouse to the person for drawing.
             // 2c. call GrowTree(spouse, marriage)
 
-            PersonNode nodeP = (PersonNode)_nf.Create(who, StringForNode(who), ColorForNode(who));
+            PersonNode nodeP = (PersonNode)_nf.Create(who, StringForNode(who), ColorForNode(who), depth);
             _tree.addChild(parent, nodeP);
 
             foreach (var marr in who.SpouseIn)
             {
                 // Add each spouse as a pseudo-child of the 'parent'
                 Person spouseP = marr.Spouse(who);
-                PersonNode node = (PersonNode)_nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), true);
+                PersonNode node = (PersonNode)_nf.Create(spouseP, StringForNode(spouseP), ColorForNode(spouseP), depth, true);
                 node.IsReal = false;
                 nodeP.AddSpouse(node);
                 _tree.addChild(parent, node);
@@ -162,12 +162,12 @@ namespace AncesTree.TreeModel
                 {
                     case 0:
                     case 1:
-                        ITreeData node = MakeNode(child);
+                        ITreeData node = MakeNode(child, _genDepth);
                         _tree.addChild(parent, node);
                         GrowTree(node as UnionNode);
                         break;
                     default:
-                        MultiMarriage(parent, child);
+                        MultiMarriage(parent, child, _genDepth);
                         break;
                 }
             }
