@@ -60,6 +60,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.chkVertical = new System.Windows.Forms.CheckBox();
+            this.chkGenLines = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // treePanel21
@@ -342,11 +343,23 @@
             this.chkVertical.UseVisualStyleBackColor = true;
             this.chkVertical.CheckedChanged += new System.EventHandler(this.chkVertical_CheckedChanged);
             // 
+            // chkGenLines
+            // 
+            this.chkGenLines.AutoSize = true;
+            this.chkGenLines.Location = new System.Drawing.Point(166, 286);
+            this.chkGenLines.Name = "chkGenLines";
+            this.chkGenLines.Size = new System.Drawing.Size(134, 17);
+            this.chkGenLines.TabIndex = 34;
+            this.chkGenLines.Text = "Draw Generation Lines";
+            this.chkGenLines.UseVisualStyleBackColor = true;
+            this.chkGenLines.CheckedChanged += new System.EventHandler(this.chkGenLines_CheckedChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(724, 464);
+            this.Controls.Add(this.chkGenLines);
             this.Controls.Add(this.chkVertical);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnReset);
@@ -416,5 +429,6 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.CheckBox chkVertical;
+        private System.Windows.Forms.CheckBox chkGenLines;
     }
 }

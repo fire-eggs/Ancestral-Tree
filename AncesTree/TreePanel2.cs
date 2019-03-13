@@ -130,14 +130,15 @@ namespace AncesTree
         {
             if (_boxen == null)
                 return;
-            _g = g;
-
-            //_g.SmoothingMode = SmoothingMode.AntiAlias;
-            //_g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             _config = _boxen.getConfiguration() as TreeConfiguration;
             if (_config == null)
                 return;
+
+            _g = g;
+
+            //_g.SmoothingMode = SmoothingMode.AntiAlias;
+            //_g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             g.Clear(_config.BackColor.GetColor());
             _g.ScaleTransform(_zoom, _zoom);
@@ -152,6 +153,7 @@ namespace AncesTree
             {
                 PaintEdges(GetTree().getRoot());
 
+                _nextLevel = 1;
                 // paint the boxes
                 foreach (var node in _boxen.getNodeBounds().Keys)
                 {
@@ -250,8 +252,14 @@ namespace AncesTree
 
         private const int gapBetweenLevels = 30; // TODO pull from configuration
 
+        private int _nextLevel;
+
         private void paintNode(ITreeData node)
         {
+            int currDepth = 0;
+            int genLineY = 0;
+            bool drawVert = false;
+
             Rectangle box = drawBounds(node);
 
             PersonNode foo = node as PersonNode;
@@ -260,6 +268,9 @@ namespace AncesTree
                 // Don't draw the fake for multi-marriage at root
                 if (foo.Text != " " || foo.Who != null)
                     paintABox(foo, box);
+                currDepth = foo.Depth;
+                genLineY = foo.Vertical ? box.Right : box.Bottom;
+                drawVert = foo.Vertical;
             }
             else
             {
@@ -280,11 +291,26 @@ namespace AncesTree
                     }
                     paintABox(bar.P1, box1);
                     paintABox(bar.P2, box2);
+
+                    currDepth = bar.P1.Depth;
+                    genLineY = bar.Vertical ? Math.Max(box1.Right, box2.Right) : Math.Max(box1.Bottom, box2.Bottom);
+                    drawVert = bar.Vertical;
                 }
 
                 // debugging
                 //using (var pen = new Pen(Color.Magenta))
                 //    _g.DrawRectangle(pen, box);
+            }
+
+            if (currDepth == _nextLevel && _config.GenLines)
+            {
+                _nextLevel += 1;
+                genLineY += 8;
+                if (drawVert)
+                    _g.DrawLine(Pens.Blue, new Point(genLineY,0), new Point(genLineY, Height));
+                else
+                    _g.DrawLine(Pens.Blue, new Point(0, genLineY), new Point(Width, genLineY));
+
             }
         }
 

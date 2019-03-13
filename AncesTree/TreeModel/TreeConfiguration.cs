@@ -71,7 +71,10 @@ namespace AncesTree.TreeModel
             get { return alignmentInLevel; }
             set { alignmentInLevel = value; }
         }
+
 #pragma warning restore S2292 // Trivial properties should be auto-implemented
+
+        public bool GenLines { get; set; }
 
         public int SpouseGap { get; set; }
 

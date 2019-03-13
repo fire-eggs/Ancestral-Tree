@@ -43,6 +43,7 @@ namespace AncesTree
             btnBackColor.Value = _settings.BackColor;
 
             chkVertical.Checked = _settings.RootLoc == Configuration.Location.Left;
+            chkGenLines.Checked = _settings.GenLines;
         }
 
         private void OnColorChange(object sender, ColorValues newValue)
@@ -80,9 +81,9 @@ namespace AncesTree
         private const string gedcom = 
             "0 @I1@ INDI\n1 NAME John /Doe/\n1 SEX M\n" + 
             "0 @I2@ INDI\n1 NAME Mary /Moe/\n1 SEX F\n" + 
-            "0 @I3@ INDI\n1 NAME Richard /Moe/\n1 SEX M\n" + 
+            "0 @I3@ INDI\n1 NAME Richard /Moe/\n1 SEX M\n1 BIRT\n2 DATE 1901\n" + 
             "0 @I4@ INDI\n1 NAME Janet /Moe/\n1 SEX F\n" +
-            "0 @I5@ INDI\n1 NAME Margaret /Moe/\n1 SEX F\n"+
+            "0 @I5@ INDI\n1 NAME Margaret /Moe/\n1 SEX F\n1 BIRT\n2 DATE 1910\n" +
             "0 @I6@ INDI\n1 NAME Thomas /Toe/\n1 SEX M\n" +
             "0 @I7@ INDI\n1 NAME Billy /Boe/\n1 SEX U\n" +
             "0 @I8@ INDI\n1 NAME Clarissa /Moe/\n1 SEX F\n" +
@@ -176,6 +177,12 @@ namespace AncesTree
         private void chkVertical_CheckedChanged(object sender, EventArgs e)
         {
             _settings.RootLoc = chkVertical.Checked ? Configuration.Location.Left : Configuration.Location.Top;
+            Rebuild();
+        }
+
+        private void chkGenLines_CheckedChanged(object sender, EventArgs e)
+        {
+            _settings.GenLines = chkGenLines.Checked;
             Rebuild();
         }
     }
