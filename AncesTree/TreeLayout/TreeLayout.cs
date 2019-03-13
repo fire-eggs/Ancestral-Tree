@@ -721,6 +721,8 @@ namespace AncesTree.TreeLayout
             }
         }
 
+        public bool _notFirstTime = false;
+
         /**
          * In difference to the original algorithm we also pass in extra level
          * information.
@@ -776,6 +778,13 @@ namespace AncesTree.TreeLayout
                 double nextLevelStart = levelStart
                         + (levelSize + configuration.getGapBetweenLevels(level + 1))
                         * levelChangeSign;
+
+                // brute-force mechanism: if the tree root is not real, avoid an initial level gap
+                if (_notFirstTime)
+                {
+                    nextLevelStart = 0;
+                    _notFirstTime = false;
+                }
                 foreach (TreeNode w in tree.getChildren(v))
                 {
                     secondWalk(w, m + getMod(v), level + 1, nextLevelStart);
@@ -835,7 +844,7 @@ namespace AncesTree.TreeLayout
          */
         public TreeLayout(TreeForTreeLayout<TreeNode> tree,
                 NodeExtentProvider<TreeNode> nodeExtentProvider,
-                Configuration configuration, bool useIdentity)
+                Configuration configuration, bool collapseRoot)
         {
             this.tree = tree;
             this.nodeExtentProvider = nodeExtentProvider;
@@ -858,15 +867,18 @@ namespace AncesTree.TreeLayout
             TreeNode r = tree.getRoot();
             firstWalk(r, default(TreeNode));
             calcSizeOfLevels(r, 0);
+            _notFirstTime = collapseRoot; // KBR 20190313 crude mechanism to not add spacing for false root
             secondWalk(r, -getPrelim(r), 0, 0);
         }
 
+/*
         public TreeLayout(TreeForTreeLayout<TreeNode> tree,
                 NodeExtentProvider<TreeNode> nodeExtentProvider,
                 Configuration configuration) : this(tree, nodeExtentProvider, configuration, false)
         {
 
         }
+*/
 
         // ------------------------------------------------------------------------
         // checkTree

@@ -186,15 +186,20 @@ namespace AncesTree.TreeModel
 
         public ITreeData Create(Person p, string s, Color clr, int depth, bool isSpouse = false)
         {
-            // MeasureString and DrawText will behave as desired for multiline text
-            // if the Environment.NewLine is used for line separation.
-            var s2 = s.Replace("\n", Environment.NewLine);
-            SizeF txtSz = _graphics.MeasureString(s2,
-                isSpouse ? _spouseFont : _mainFont,
-                1000, StringFormat.GenericDefault);
+            int w, h;
+            w = h = 0;
+            if (s != null)
+            {
+                // MeasureString and DrawText will behave as desired for multiline text
+                // if the Environment.NewLine is used for line separation.
+                var s2 = s.Replace("\n", Environment.NewLine);
+                SizeF txtSz = _graphics.MeasureString(s2,
+                    isSpouse ? _spouseFont : _mainFont,
+                    1000, StringFormat.GenericDefault);
 
-            int w = (int) (txtSz.Width + 1);
-            int h = (int) (txtSz.Height);
+                w = (int) (txtSz.Width + 1);
+                h = (int) (txtSz.Height);
+            }
             var node = new PersonNode(p, s, w, h, _vertOrient);
             node.BackColor = clr;
             node.DrawVert = !isSpouse; // TODO brother/sister incest: both spouses are children

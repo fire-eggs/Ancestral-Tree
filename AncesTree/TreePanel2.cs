@@ -303,7 +303,7 @@ namespace AncesTree
             {
                 var p = parent as PersonNode;
                 // Don't draw the fake for multi-marriage at root
-                if (p.Text != " " || p.Who != null)
+                if (!string.IsNullOrEmpty(p.Text) || p.Who != null)
                     paintPersonEdges(parent as PersonNode);
             }
             else

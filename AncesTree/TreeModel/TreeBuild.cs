@@ -35,7 +35,8 @@ namespace AncesTree.TreeModel
                     break;
                 default:
                     // Multi-marriage at the root.
-                    treeRoot = _nf.Create(null, " ", Color.GreenYellow, 0); // this is a "pseudo-node" which doesn't get drawn
+                    treeRoot = _nf.Create(null, null, Color.GreenYellow, 0); // this is a "pseudo-node" which doesn't get drawn
+                    ((PersonNode)treeRoot).IsReal = false;
                     _tree = new DefaultTreeForTreeLayout<ITreeData>(treeRoot);
                     MultiMarriage(treeRoot, root, _genDepth);
                     break;

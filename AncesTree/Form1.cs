@@ -162,7 +162,7 @@ namespace AncesTree
             var nodeExtentProvider = new NodeExtents();
 
             // create the layout
-            var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config);
+            var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, config, !tree.getRoot().IsReal);
             treePanel1.Boxen = treeLayout;
         }
 

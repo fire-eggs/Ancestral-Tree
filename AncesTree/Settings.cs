@@ -73,7 +73,7 @@ namespace AncesTree
             var tree = TreeBuild.BuildTree(treePanel21, _settings, _patriarch);
 
             var nodeExtentProvider = new NodeExtents();
-            var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, _settings);
+            var treeLayout = new TreeLayout<ITreeData>(tree, nodeExtentProvider, _settings, false);
             treePanel21.Boxen = treeLayout;
         }
 
