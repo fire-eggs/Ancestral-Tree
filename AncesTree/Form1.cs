@@ -17,7 +17,7 @@ namespace AncesTree
 {
     public partial class Form1 : Form
     {
-        readonly List<CmbItem> _cmbItems = new List<CmbItem>();
+        private List<CmbItem> _cmbItems;
         protected MruStripMenu mnuMRU;
 
         public Form1()
@@ -214,8 +214,11 @@ namespace AncesTree
             personSel.SelectedIndexChanged -= personSel_SelectedIndexChanged;
             personSel.Enabled = false;
             personSel.BeginUpdate();
+            personSel.SelectedIndex = -1; // force SelectedIndexChanged to happen below
             personSel.DataSource = null;
-            _cmbItems.Clear();
+
+            // Issue #24: Merely clearing the list does not properly update the combo. Must recreate it.
+            _cmbItems = new List<CmbItem>();
 
             HashSet<string> comboNames = new HashSet<string>();
             Dictionary<string, Person> comboPersons = new Dictionary<string, Person>();
@@ -244,7 +247,7 @@ namespace AncesTree
             personSel.EndUpdate();
             personSel.Enabled = true;
             personSel.SelectedIndexChanged += personSel_SelectedIndexChanged;
-            personSel.SelectedIndex = 0;
+            personSel.SelectedIndex = 0; // after switch, force rebuild of tree for the first person in the (new) tree
         }
 
         private void btnZoomIn_Click(object sender, EventArgs e)
