@@ -56,6 +56,9 @@ namespace AncesTree
             lastY = e.Y;
 
             ITreeData node = findPersonFromPoint(e.X, e.Y);
+
+            MarkForHighlight(node);
+
             if (node != null)
                 OnNodeHover?.Invoke(this, node);
         }
@@ -626,5 +629,23 @@ namespace AncesTree
             return true;
         }
 
+        private ITreeData lightNode;
+
+        private void MarkForHighlight(ITreeData node)
+        {
+            if (node == null)
+            {
+                if (lightNode != null)
+                {
+                    lightNode = null;
+                    Refresh();
+                }
+            }
+            else
+            {
+                lightNode = node;
+                Refresh();
+            }
+        }
     }
 }

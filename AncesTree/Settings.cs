@@ -14,7 +14,7 @@ namespace AncesTree
         {
             InitializeComponent();
             Load += Settings_Load;
-            button4.Click += button4_Click;
+            cmbHighlight.Items.AddRange(new string[] { "None", "Line", "Glow", "Three-D" });
         }
 
         void Settings_Load(object sender, EventArgs e)
@@ -41,9 +41,12 @@ namespace AncesTree
             btnFemaleColor.Value = _settings.FemaleColor;
             btnUnknownColor.Value = _settings.UnknownColor;
             btnBackColor.Value = _settings.BackColor;
+            btnHighlight.Value = _settings.HighlightColor;
 
             chkVertical.Checked = _settings.RootLoc == Configuration.Location.Left;
             chkGenLines.Checked = _settings.GenLines;
+
+            cmbHighlight.SelectedIndex = (int)_settings.HighlightStyle;
         }
 
         private void OnColorChange(object sender, ColorValues newValue)
@@ -58,6 +61,8 @@ namespace AncesTree
                 _settings.UnknownColor = btnUnknownColor.Value;
             if (sender == btnBackColor)
                 _settings.BackColor = btnBackColor.Value;
+            if (sender == btnHighlight)
+                _settings.HighlightColor = btnHighlight.Value;
             Rebuild();
         }
 
@@ -183,6 +188,12 @@ namespace AncesTree
         private void chkGenLines_CheckedChanged(object sender, EventArgs e)
         {
             _settings.GenLines = chkGenLines.Checked;
+            Rebuild();
+        }
+
+        private void cmbHighlight_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _settings.HighlightStyle = (HighlightStyles)cmbHighlight.SelectedIndex;
             Rebuild();
         }
     }

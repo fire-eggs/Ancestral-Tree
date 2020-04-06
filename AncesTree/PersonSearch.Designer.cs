@@ -123,11 +123,11 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // btnRelationsFont
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.Location = new System.Drawing.Point(258, 3);
-            this.button3.Name = "button3";
+            this.button3.Name = "btnRelationsFont";
             this.button3.Size = new System.Drawing.Size(25, 23);
             this.button3.TabIndex = 4;
             this.button3.Text = "X";

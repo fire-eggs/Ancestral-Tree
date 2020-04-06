@@ -37,6 +37,14 @@ namespace AncesTree.TreeModel
         public Color GetColor() { return Color.FromArgb(ARGB);}
     }
 
+    public enum HighlightStyles
+    {
+        None = 0,
+        Line,
+        Glow,
+        ThreeD
+    }
+
     public class TreeConfiguration : DefaultConfiguration
     {
         public TreeConfiguration() : base (0, 0)
@@ -91,6 +99,10 @@ namespace AncesTree.TreeModel
         public ColorValues FemaleColor { get; set; }
         public ColorValues UnknownColor { get; set; }
         public ColorValues BackColor { get; set; }
+        public ColorValues HighlightColor { get; set; }
+
+        public HighlightStyles HighlightStyle { get; set; } = HighlightStyles.None;
+
         public bool RootOnLeft { get { return RootLoc == Location.Left; } }
 
         public int MaxDepth { get; set; }
