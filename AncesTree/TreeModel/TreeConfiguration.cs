@@ -153,6 +153,9 @@ namespace AncesTree.TreeModel
 
             config.BackColor = new ColorValues { ARGB = Color.Bisque.ToArgb() };
 
+            config.HighlightColor = new ColorValues { ARGB = Color.Red.ToArgb() };
+            config.HighlightStyle = HighlightStyles.Line;
+
             config.MaxDepth = 10;
             return config;
         }
