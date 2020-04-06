@@ -1,26 +1,31 @@
-﻿/*
- * A panel drawing an abego tree. Provides hover/click events for
- * tree nodes.
- */
-
-using AncesTree.TreeLayout;
+﻿using AncesTree.TreeLayout;
 using AncesTree.TreeModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
 
-// TODO are duplicated nodes for multi-marriage getting connected? i.e. where is 'DrawDuplicateNode(PersonNode)'?
-
-namespace AncesTree
+namespace AncesTree.Controls
 {
-    public class TreePanel2 : Panel
+    public partial class TreePanel : UserControl
     {
+        public TreePanel()
+        {
+            InitializeComponent();
+            DoubleBuffered = true;
+            BorderStyle = BorderStyle.FixedSingle;
+            ResizeRedraw = true;
+            BackColor = Color.Beige;
+
+            MouseMove += TreePanel_MouseMove;
+            MouseClick += TreePanel_MouseClick;
+            MouseDoubleClick += TreePanel_MouseDoubleClick;
+        }
+
         #region Provided Events
         public delegate void NodeClick(object sender, ITreeData node);
         public delegate void NodeHover(object sender, ITreeData node);
@@ -29,222 +34,30 @@ namespace AncesTree
         public event NodeClick OnNodeClick;
         [Browsable(true)]
         public event NodeHover OnNodeHover;
+        [Browsable(true)]
+        public event NodeClick OnNodeDoubleClick;
         #endregion
 
-        private TreeConfiguration _config;
-
-        public TreePanel2()
-        {
-            BorderStyle = BorderStyle.FixedSingle;
-            ResizeRedraw = true;
-            BackColor = Color.Beige;
-            DoubleBuffered = true;
-            Zoom = 1.0f;
-
-            MouseClick += TreePanel2_MouseClick;
-            MouseMove += TreePanel2_MouseMove;
-        }
-
-        #region Mouse Event Handling
-        int lastX = -1;
-        int lastY = -1;
-        private void TreePanel2_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (Math.Abs(lastX - e.X) < 3 && Math.Abs(lastY - e.Y) < 3) // ignore minor move delta
-                return;
-            lastX = e.X;
-            lastY = e.Y;
-
-            ITreeData node = findPersonFromPoint(e.X, e.Y);
-
-            MarkForHighlight(node);
-
-            if (node != null)
-                OnNodeHover?.Invoke(this, node);
-        }
-
-        private void TreePanel2_MouseClick(object sender, MouseEventArgs e)
-        {
-            ITreeData node = findPersonFromPoint(e.X, e.Y);
-            if (node != null)
-                OnNodeClick?.Invoke(this, node);
-        }
-        #endregion
-
-        private ITreeData findNodeByPoint(int x0, int y0)
-        {
-            if (_boxen == null)
-                return null;
-
-            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
-            float y = y0 / _zoom;
-
-            foreach (var nodeRect in _boxen.getNodeBounds().Values)
-            {
-                if (nodeRect.Contains(x, y))
-                    return _boxen.getNodeBounds().FirstOrDefault(i => i.Value == nodeRect).Key;
-            }
-            return null;
-        }
-
-        private ITreeData getPersonFromUnion(UnionNode un, int x0, int y0)
-        {
-            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
-            float y = y0 / _zoom;
-
-            var box = _boxen.getNodeBounds()[un]; //drawBounds(un);
-            var box1 = new Rect(box.X, box.Y, un.P1.Wide, un.P1.High);
-            if (box1.Contains(x, y))
-                return un.P1;
-
-            Rect box2;
-            if (un.Vertical)
-            {
-                box2 = new Rect(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
-            }
-            else
-            {
-                box2 = new Rect(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
-            }
-            if (box2.Contains(x, y))
-                return un.P2;
-            return null;
-        }
-
-        /// <summary>
-        /// Determine which Person box is under the mouse cursor. I.e. finds which person in
-        /// a UnionNode, or the PersonNode.
-        /// </summary>
-        /// <param name="X">mouse cursor x pos</param>
-        /// <param name="Y">mouse cursor y pos</param>
-        /// <returns></returns>
-        private ITreeData findPersonFromPoint(int X, int Y)
-        {
-            ITreeData node = findNodeByPoint(X - 8, Y - 8); // TODO WHY is this delta necessary?
-            UnionNode un = node as UnionNode;
-            if (un != null)
-            {
-                node = getPersonFromUnion(un, X - 8, Y - 8);
-            }
-            return node;
-        }
-
-        public void drawTree(Graphics g)
-        {
-            if (_boxen == null)
-                return;
-
-            _config = _boxen.getConfiguration() as TreeConfiguration;
-            if (_config == null)
-                return;
-
-            _g = g;
-
-            //_g.SmoothingMode = SmoothingMode.AntiAlias;
-            //_g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            g.Clear(_config.BackColor.GetColor());
-            _g.ScaleTransform(_zoom, _zoom);
-            _g.TranslateTransform(_margin, _margin);
-
-            // TODO create and cache outside paint
-            _duplPen = _config.DuplLine.GetPen();
-            _multEdge = _config.MMargLine.GetPen();
-            _border = _config.NodeBorder.GetPen();
-            _spousePen = _config.SpouseLine.GetPen();
-            _childPen = _config.ChildLine.GetPen();
-            {
-                PaintEdges(GetTree().getRoot());
-
-                _nextLevel = 1;
-                // paint the boxes
-                foreach (var node in _boxen.getNodeBounds().Keys)
-                {
-                    paintNode(node);
-                }
-            }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            drawTree(e.Graphics);
-        }
+        #region Properties
 
         private int _margin = 10; // TODO from configuration
-
         public int TreeMargin
         {
             get { return _margin; }
             set { _margin = Math.Max(value, 0); ResizeMe(); }
         }
 
-        private float _zoom;
-        public float Zoom 
-        { 
+        private float _zoom = 1.0F;
+        public float Zoom
+        {
             get { return _zoom; }
-            set { _zoom = Math.Max(value, 0.1f); ResizeMe(); } 
+            set { _zoom = Math.Max(value, 0.1f); ResizeMe(); }
         }
 
-        private Graphics _g;
         private TreeLayout<ITreeData> _boxen;
-
         public TreeLayout<ITreeData> Boxen
         {
             set { _boxen = value; ResizeMe(); }
-        }
-
-        private void ResizeMe()
-        {
-            // Tree or scale changed. Update control size to fit.
-
-            if (_boxen == null)
-                return;
-            var newSize = _boxen.getBounds();
-            // NOTE side-effect: control is invalidated from resize BUG except when size doesn't change!
-            this.Size = new System.Drawing.Size
-                ((int)((newSize.Width + 2 * _margin) * _zoom),
-                 (int)((newSize.Height + 2 * _margin) * _zoom));
-            Invalidate();
-        }
-
-        private Pen _border;
-
-        private Pen _multEdge;
-
-        private Pen _duplPen;
-
-        private Pen _spousePen;
-
-        private Pen _childPen;
-
-        #region TreeLayout Access/Helper functions
-
-        private Rectangle drawBounds(ITreeData node)
-        {
-            Rect r = getBoundsOfNode(node);
-            return new Rectangle((int)r.Left, (int)r.Top, (int)r.Width, (int)r.Height);
-        }
-
-        private Rect getBoundsOfNode(ITreeData node)
-        {
-            return _boxen.getNodeBounds()[node];
-        }
-
-        private IEnumerable<ITreeData> getChildren(ITreeData parent)
-        {
-            return GetTree().getChildren(parent);
-        }
-
-        private bool hasChildren(ITreeData parent)
-        {
-            var enumer = getChildren(parent);
-            return (enumer != null && enumer.Any());
-        }
-
-        private TreeForTreeLayout<ITreeData> GetTree()
-        {
-            return _boxen.getTree();
         }
 
         #endregion
@@ -257,116 +70,68 @@ namespace AncesTree
 
         private int _nextLevel;
 
-        private void paintNode(ITreeData node)
+        private TreeConfiguration _config;
+
+        #region Painting
+        private Graphics _g;
+
+        private Pen _border;
+
+        private Pen _multEdge;
+
+        private Pen _duplPen;
+
+        private Pen _spousePen;
+
+        private Pen _childPen;
+
+        private bool drawTree(Graphics g)
         {
-            int currDepth = 0;
-            int genLineY = 0;
-            bool drawVert = false;
+            if (_boxen == null)
+                return false;
 
-            Rectangle box = drawBounds(node);
+            _config = _boxen.getConfiguration() as TreeConfiguration;
+            if (_config == null)
+                return false;
 
-            PersonNode foo = node as PersonNode;
-            if (foo != null)
+            _g = g;
+            _g.Clear(_config.BackColor.GetColor());
+            _g.ScaleTransform(_zoom, _zoom);
+            _g.TranslateTransform(_margin, _margin);
+
+            // TODO create and cache outside paint
+            // TODO need to dispose
+            _duplPen = _config.DuplLine.GetPen();
+            _multEdge = _config.MMargLine.GetPen();
+            _border = _config.NodeBorder.GetPen();
+            _spousePen = _config.SpouseLine.GetPen();
+            _childPen = _config.ChildLine.GetPen();
+
+            PaintEdges(GetTree().getRoot());
+
+            _nextLevel = 1;
+            // paint the boxes
+            foreach (var node in _boxen.getNodeBounds().Keys)
             {
-                // Don't draw the fake for multi-marriage at root
-                if (foo.Text != " " || foo.Who != null)
-                    paintABox(foo, box);
-                currDepth = foo.Depth;
-                genLineY = foo.Vertical ? box.Right : box.Bottom;
-                drawVert = foo.Vertical;
+                paintNode(node);
             }
-            else
-            {
-                // Drawing a union node. Said node consists of two Person boxes.
-                // (Spouse connector drawn in PaintEdges).
-                UnionNode bar = node as UnionNode;
-                if (bar != null)
-                {
-                    Rectangle box1 = new Rectangle(box.X, box.Y, bar.P1.Wide, bar.P1.High);
-                    Rectangle box2;
-                    if (bar.Vertical)
-                    {
-                        box2 = new Rectangle(box.X, box.Y + bar.P1.High + UNION_BAR_WIDE, bar.P2.Wide, bar.P2.High);
-                    }
-                    else
-                    {
-                        box2 = new Rectangle(box.X + bar.P1.Wide + UNION_BAR_WIDE, box.Y, bar.P2.Wide, bar.P2.High);
-                    }
-                    paintABox(bar.P1, box1);
-                    paintABox(bar.P2, box2);
-
-                    currDepth = bar.P1.Depth;
-                    genLineY = bar.Vertical ? Math.Max(box1.Right, box2.Right) : Math.Max(box1.Bottom, box2.Bottom);
-                    drawVert = bar.Vertical;
-                }
-
-                // debugging
-                //using (var pen = new Pen(Color.Magenta))
-                //    _g.DrawRectangle(pen, box);
-            }
-
-            if (currDepth == _nextLevel && _config.GenLines)
-            {
-                _nextLevel += 1;
-                genLineY += 8;
-                if (drawVert)
-                    _g.DrawLine(Pens.Blue, new Point(genLineY,0), new Point(genLineY, Height));
-                else
-                    _g.DrawLine(Pens.Blue, new Point(0, genLineY), new Point(Width, genLineY));
-
-            }
+            return true;
         }
 
-        private void paintABox(PersonNode tib, Rectangle box)
+        public Bitmap DrawToImage(int width, int height)
         {
-            PaintHighlight(tib, box);
-
-            using (Brush b = new SolidBrush(tib.BackColor))
-                _g.FillRectangle(b, box);
-            _g.DrawRectangle(_border, box);
-            using (var font = tib.DrawVert ? _config.MajorFont.GetFont() : _config.MinorFont.GetFont())
-                _g.DrawString(tib.Text, font, new SolidBrush(TEXT_COLOR), box.X, box.Y);
+            var bmp = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                drawTree(g);
+            }
+            return bmp;
         }
 
-        private void PaintHighlight(PersonNode tib, Rectangle box)
+        protected override void OnPaintBackground(PaintEventArgs e)
         {
-            if (tib != (PersonNode)lightNode ||
-                _config.HighlightStyle == HighlightStyles.None)
-                return;
-
-            Rectangle r = new Rectangle(box.Location, box.Size);
-            Color c = _config.HighlightColor.GetColor();
-
-            switch (_config.HighlightStyle)
-            {
-                case HighlightStyles.Line:
-                    r.Inflate(1, 1);
-                    using (Pen p = new Pen(c, 3.0f))
-                        _g.DrawRectangle(p, r);
-                    break;
-                case HighlightStyles.Glow:
-                    int glowwide = 8;
-                    Color glowcol = c;
-                    int l = 255 / (glowwide + 1);
-                    for (int j = 0; j <= glowwide; j++)
-                    {
-                        r.Inflate(1, 1);
-                        using (SolidBrush sb = new SolidBrush(Color.FromArgb(Math.Max(0, 255 - (int)(l * j * 1.25)), glowcol)))
-                        {
-                            using (Pen p = new Pen(sb, 1))
-                                _g.DrawRectangle(p, r);
-                        }
-                    }
-                    break;
-                case HighlightStyles.ThreeD:
-                    r.Inflate(5, 5);
-                    ControlPaint.DrawBorder(_g, r, 
-                        c, 5, ButtonBorderStyle.Outset,
-                        c, 5, ButtonBorderStyle.Outset,
-                        c, 5, ButtonBorderStyle.Outset,
-                        c, 5, ButtonBorderStyle.Outset);
-                    break;
-            }
+            if (!drawTree(e.Graphics))
+                base.OnPaintBackground(e);
         }
 
         private void PaintEdges(ITreeData parent)
@@ -403,7 +168,7 @@ namespace AncesTree
                 if (parent.Vertical)
                 {
                     // Need to determine the left-most node with narrow spouse nodes.
-                    int topX = b1.Left + b1.Width / 2; 
+                    int topX = b1.Left + b1.Width / 2;
                     foreach (var node in parent.Spouses)
                     {
                         var b2 = drawBounds(node);
@@ -672,6 +437,182 @@ namespace AncesTree
             return true;
         }
 
+        private Rectangle drawBounds(ITreeData node)
+        {
+            Rect r = getBoundsOfNode(node);
+            return new Rectangle((int)r.Left, (int)r.Top, (int)r.Width, (int)r.Height);
+        }
+
+        private Rect getBoundsOfNode(ITreeData node)
+        {
+            return _boxen.getNodeBounds()[node];
+        }
+
+        private void paintNode(ITreeData node)
+        {
+            int currDepth = 0;
+            int genLineY = 0;
+            bool drawVert = false;
+
+            Rectangle box = drawBounds(node);
+
+            PersonNode foo = node as PersonNode;
+            if (foo != null)
+            {
+                // Don't draw the fake for multi-marriage at root
+                if (foo.Text != " " || foo.Who != null)
+                    paintABox(foo, box);
+                currDepth = foo.Depth;
+                genLineY = foo.Vertical ? box.Right : box.Bottom;
+                drawVert = foo.Vertical;
+            }
+            else
+            {
+                // Drawing a union node. Said node consists of two Person boxes.
+                // (Spouse connector drawn in PaintEdges).
+                UnionNode bar = node as UnionNode;
+                if (bar != null)
+                {
+                    Rectangle box1 = new Rectangle(box.X, box.Y, bar.P1.Wide, bar.P1.High);
+                    Rectangle box2;
+                    if (bar.Vertical)
+                    {
+                        box2 = new Rectangle(box.X, box.Y + bar.P1.High + UNION_BAR_WIDE, bar.P2.Wide, bar.P2.High);
+                    }
+                    else
+                    {
+                        box2 = new Rectangle(box.X + bar.P1.Wide + UNION_BAR_WIDE, box.Y, bar.P2.Wide, bar.P2.High);
+                    }
+                    paintABox(bar.P1, box1);
+                    paintABox(bar.P2, box2);
+
+                    currDepth = bar.P1.Depth;
+                    genLineY = bar.Vertical ? Math.Max(box1.Right, box2.Right) : Math.Max(box1.Bottom, box2.Bottom);
+                    drawVert = bar.Vertical;
+                }
+
+                // debugging
+                //using (var pen = new Pen(Color.Magenta))
+                //    _g.DrawRectangle(pen, box);
+            }
+
+            if (currDepth == _nextLevel && _config.GenLines)
+            {
+                _nextLevel += 1;
+                genLineY += 8;
+                if (drawVert)
+                    _g.DrawLine(Pens.Blue, new Point(genLineY, 0), new Point(genLineY, Height));
+                else
+                    _g.DrawLine(Pens.Blue, new Point(0, genLineY), new Point(Width, genLineY));
+
+            }
+        }
+
+        private void paintABox(PersonNode tib, Rectangle box)
+        {
+            PaintHighlight(tib, box);
+
+            using (Brush b = new SolidBrush(tib.BackColor))
+                _g.FillRectangle(b, box);
+            _g.DrawRectangle(_border, box);
+            using (var font = tib.DrawVert ? _config.MajorFont.GetFont() : _config.MinorFont.GetFont())
+                _g.DrawString(tib.Text, font, new SolidBrush(TEXT_COLOR), box.X, box.Y);
+        }
+
+        private void PaintHighlight(PersonNode tib, Rectangle box)
+        {
+            if (tib != (PersonNode)lightNode ||
+                _config.HighlightStyle == HighlightStyles.None)
+                return;
+
+            Rectangle r = new Rectangle(box.Location, box.Size);
+            Color c = _config.HighlightColor.GetColor();
+
+            switch (_config.HighlightStyle)
+            {
+                case HighlightStyles.Line:
+                    r.Inflate(1, 1);
+                    using (Pen p = new Pen(c, 3.0f))
+                        _g.DrawRectangle(p, r);
+                    break;
+                case HighlightStyles.Glow:
+                    int glowwide = 8;
+                    Color glowcol = c;
+                    int l = 255 / (glowwide + 1);
+                    for (int j = 0; j <= glowwide; j++)
+                    {
+                        r.Inflate(1, 1);
+                        using (SolidBrush sb = new SolidBrush(Color.FromArgb(Math.Max(0, 255 - (int)(l * j * 1.25)), glowcol)))
+                        {
+                            using (Pen p = new Pen(sb, 1))
+                                _g.DrawRectangle(p, r);
+                        }
+                    }
+                    break;
+                case HighlightStyles.ThreeD:
+                    r.Inflate(5, 5);
+                    ControlPaint.DrawBorder(_g, r,
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset);
+                    break;
+            }
+        }
+
+        #endregion
+
+        private TreeForTreeLayout<ITreeData> GetTree()
+        {
+            return _boxen.getTree();
+        }
+
+        private void ResizeMe()
+        {
+            // Tree or scale changed. Update control size to fit.
+
+            if (_boxen == null)
+                return;
+            var newSize = _boxen.getBounds();
+            // NOTE side-effect: control is invalidated from resize BUG except when size doesn't change!
+            this.Size = new System.Drawing.Size
+                ((int)((newSize.Width + 2 * _margin) * _zoom),
+                 (int)((newSize.Height + 2 * _margin) * _zoom));
+            Invalidate();
+        }
+
+        #region Mouse Event Handling + Highlight
+        int lastX = -1;
+        int lastY = -1;
+        private void TreePanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Math.Abs(lastX - e.X) < 3 && Math.Abs(lastY - e.Y) < 3) // ignore minor move delta
+                return;
+            lastX = e.X;
+            lastY = e.Y;
+
+            ITreeData node = findPersonFromPoint(e.X, e.Y);
+
+            MarkForHighlight(node);
+
+            if (node != null)
+                OnNodeHover?.Invoke(this, node);
+        }
+
+        private void TreePanel_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ITreeData node = findPersonFromPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeDoubleClick?.Invoke(this, node);
+        }
+
+        private void TreePanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            ITreeData node = findPersonFromPoint(e.X, e.Y);
+            if (node != null)
+                OnNodeClick?.Invoke(this, node);
+        }
+
         private ITreeData lightNode;
 
         private void MarkForHighlight(ITreeData node)
@@ -690,5 +631,72 @@ namespace AncesTree
                 Refresh();
             }
         }
+
+        #endregion
+
+        #region Tree Management
+        // TODO should be in tree classes?
+        private ITreeData findPersonFromPoint(int X, int Y)
+        {
+            ITreeData node = findNodeByPoint(X - 8, Y - 8); // TODO WHY is this delta necessary?
+            UnionNode un = node as UnionNode;
+            if (un != null)
+            {
+                node = getPersonFromUnion(un, X - 8, Y - 8);
+            }
+            return node;
+        }
+
+        private ITreeData findNodeByPoint(int x0, int y0)
+        {
+            if (_boxen == null)
+                return null;
+
+            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
+            float y = y0 / _zoom;
+
+            foreach (var nodeRect in _boxen.getNodeBounds().Values)
+            {
+                if (nodeRect.Contains(x, y))
+                    return _boxen.getNodeBounds().FirstOrDefault(i => i.Value == nodeRect).Key;
+            }
+            return null;
+        }
+
+        private ITreeData getPersonFromUnion(UnionNode un, int x0, int y0)
+        {
+            float x = x0 / _zoom; // 'undo' impact of zoom: box bounds are un-zoomed
+            float y = y0 / _zoom;
+
+            var box = _boxen.getNodeBounds()[un]; //drawBounds(un);
+            var box1 = new System.Windows.Rect(box.X, box.Y, un.P1.Wide, un.P1.High);
+            if (box1.Contains(x, y))
+                return un.P1;
+
+            System.Windows.Rect box2;
+            if (un.Vertical)
+            {
+                box2 = new System.Windows.Rect(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
+            }
+            else
+            {
+                box2 = new System.Windows.Rect(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
+            }
+            if (box2.Contains(x, y))
+                return un.P2;
+            return null;
+        }
+
+        private IEnumerable<ITreeData> getChildren(ITreeData parent)
+        {
+            return GetTree().getChildren(parent);
+        }
+
+        private bool hasChildren(ITreeData parent)
+        {
+            var enumer = getChildren(parent);
+            return (enumer != null && enumer.Any());
+        }
+        #endregion
     }
 }

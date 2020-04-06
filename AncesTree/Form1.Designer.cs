@@ -51,7 +51,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.spinMaxGen = new System.Windows.Forms.NumericUpDown();
-            this.treePanel1 = new AncesTree.TreePanel2();
+            this.treePanel1 = new AncesTree.Controls.TreePanel();
             this.menuStrip1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -332,7 +332,6 @@
         private System.Windows.Forms.Button btnZoomOut;
         private System.Windows.Forms.Button btn100Percent;
         private System.Windows.Forms.Button btnSaveToImage;
-        private TreePanel2 treePanel1;
         private System.Windows.Forms.Button btnConfig;
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
@@ -340,6 +339,7 @@
         private System.Windows.Forms.ToolStripMenuItem pageSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printerToolStripMenuItem;
         private System.Windows.Forms.NumericUpDown spinMaxGen;
+        private Controls.TreePanel treePanel1;
     }
 }
 

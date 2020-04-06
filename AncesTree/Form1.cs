@@ -31,19 +31,20 @@ namespace AncesTree
 
             treePanel1.OnNodeClick += TreePanel1_OnNodeClick;
             treePanel1.OnNodeHover += TreePanel1_OnNodeHover;
+            treePanel1.OnNodeDoubleClick += TreePanel1_OnNodeDoubleClick;
         }
 
         private void TreePanel1_OnNodeHover(object sender, ITreeData node)
         {
             var pnode = node as PersonNode;
-            if (pnode == null)
-            {
-                toolTip1.Hide(treePanel1);
-            }
-            else
-            {
-                toolTip1.Show(pnode.Text, treePanel1);
-            }
+            //if (pnode == null)
+            //{
+            //    toolTip1.Hide(treePanel1);
+            //}
+            //else
+            //{
+            //    toolTip1.Show(pnode.Text, treePanel1);
+            //}
         }
 
         private void SelectPerson(Person who)
@@ -59,6 +60,15 @@ namespace AncesTree
         }
 
         private void TreePanel1_OnNodeClick(object sender, ITreeData node)
+        {
+            var pnode = node as PersonNode;
+            if (pnode == null)
+                return;
+
+            // TODO what do we want to do on single-click?
+        }
+
+        private void TreePanel1_OnNodeDoubleClick(object sender, ITreeData node)
         {
             var pnode = node as PersonNode;
             if (pnode == null)
@@ -367,12 +377,7 @@ namespace AncesTree
 
         private Bitmap drawToImage()
         {
-            var bmp = new Bitmap(treePanel1.Width, treePanel1.Height);
-            using (Graphics g = Graphics.FromImage(bmp))
-            {
-                treePanel1.drawTree(g);
-            }
-            return bmp;
+            return treePanel1.DrawToImage(treePanel1.Width, treePanel1.Height);
         }
 
         private PageSettings _pageSettings;
