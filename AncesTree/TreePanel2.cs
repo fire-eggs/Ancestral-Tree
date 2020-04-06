@@ -319,11 +319,54 @@ namespace AncesTree
 
         private void paintABox(PersonNode tib, Rectangle box)
         {
+            PaintHighlight(tib, box);
+
             using (Brush b = new SolidBrush(tib.BackColor))
                 _g.FillRectangle(b, box);
             _g.DrawRectangle(_border, box);
             using (var font = tib.DrawVert ? _config.MajorFont.GetFont() : _config.MinorFont.GetFont())
                 _g.DrawString(tib.Text, font, new SolidBrush(TEXT_COLOR), box.X, box.Y);
+        }
+
+        private void PaintHighlight(PersonNode tib, Rectangle box)
+        {
+            if (tib != (PersonNode)lightNode ||
+                _config.HighlightStyle == HighlightStyles.None)
+                return;
+
+            Rectangle r = new Rectangle(box.Location, box.Size);
+            Color c = _config.HighlightColor.GetColor();
+
+            switch (_config.HighlightStyle)
+            {
+                case HighlightStyles.Line:
+                    r.Inflate(1, 1);
+                    using (Pen p = new Pen(c, 3.0f))
+                        _g.DrawRectangle(p, r);
+                    break;
+                case HighlightStyles.Glow:
+                    int glowwide = 8;
+                    Color glowcol = c;
+                    int l = 255 / (glowwide + 1);
+                    for (int j = 0; j <= glowwide; j++)
+                    {
+                        r.Inflate(1, 1);
+                        using (SolidBrush sb = new SolidBrush(Color.FromArgb(Math.Max(0, 255 - (int)(l * j * 1.25)), glowcol)))
+                        {
+                            using (Pen p = new Pen(sb, 1))
+                                _g.DrawRectangle(p, r);
+                        }
+                    }
+                    break;
+                case HighlightStyles.ThreeD:
+                    r.Inflate(5, 5);
+                    ControlPaint.DrawBorder(_g, r, 
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset,
+                        c, 5, ButtonBorderStyle.Outset);
+                    break;
+            }
         }
 
         private void PaintEdges(ITreeData parent)
