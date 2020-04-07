@@ -156,7 +156,7 @@ namespace AncesTree.TreeModel
             config.HighlightColor = new ColorValues { ARGB = Color.Red.ToArgb() };
             config.HighlightStyle = HighlightStyles.Line;
 
-            config.MaxDepth = 10;
+            config.MaxDepth = 99;
             return config;
         }
 

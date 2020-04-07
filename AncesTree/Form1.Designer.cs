@@ -164,6 +164,17 @@
             this.flowLayoutPanel1.TabIndex = 3;
             this.flowLayoutPanel1.WrapContents = false;
             // 
+            // treePanel1
+            // 
+            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
+            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.treePanel1.Location = new System.Drawing.Point(3, 3);
+            this.treePanel1.Name = "treePanel1";
+            this.treePanel1.Size = new System.Drawing.Size(643, 330);
+            this.treePanel1.TabIndex = 0;
+            this.treePanel1.TreeMargin = 10;
+            this.treePanel1.Zoom = 1F;
+            // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.AutoSize = true;
@@ -245,21 +256,6 @@
             this.btnConfig.UseVisualStyleBackColor = true;
             this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
             // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
-            this.tableLayoutPanel1.TabIndex = 4;
-            // 
             // spinMaxGen
             // 
             this.spinMaxGen.Location = new System.Drawing.Point(679, 3);
@@ -278,16 +274,20 @@
             0});
             this.spinMaxGen.ValueChanged += new System.EventHandler(this.spinMaxGen_ValueChanged);
             // 
-            // treePanel1
+            // tableLayoutPanel1
             // 
-            this.treePanel1.BackColor = System.Drawing.Color.OldLace;
-            this.treePanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.treePanel1.Location = new System.Drawing.Point(3, 3);
-            this.treePanel1.Name = "treePanel1";
-            this.treePanel1.Size = new System.Drawing.Size(643, 330);
-            this.treePanel1.TabIndex = 0;
-            this.treePanel1.TreeMargin = 10;
-            this.treePanel1.Zoom = 1F;
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(992, 518);
+            this.tableLayoutPanel1.TabIndex = 4;
             // 
             // Form1
             // 
