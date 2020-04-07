@@ -36,9 +36,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.OldLace;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.DoubleBuffered = true;
             this.Name = "TreePanel";
             this.Size = new System.Drawing.Size(129, 63);
             this.ResumeLayout(false);
+
         }
 
         #endregion

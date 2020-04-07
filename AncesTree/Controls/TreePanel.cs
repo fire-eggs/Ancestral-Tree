@@ -16,7 +16,6 @@ namespace AncesTree.Controls
         public TreePanel()
         {
             InitializeComponent();
-            DoubleBuffered = true;
             BorderStyle = BorderStyle.FixedSingle;
             ResizeRedraw = true;
             BackColor = Color.Beige;
@@ -669,18 +668,18 @@ namespace AncesTree.Controls
             float y = y0 / _zoom;
 
             var box = _boxen.getNodeBounds()[un]; //drawBounds(un);
-            var box1 = new System.Windows.Rect(box.X, box.Y, un.P1.Wide, un.P1.High);
+            var box1 = new Rect(box.X, box.Y, un.P1.Wide, un.P1.High);
             if (box1.Contains(x, y))
                 return un.P1;
 
-            System.Windows.Rect box2;
+            Rect box2;
             if (un.Vertical)
             {
-                box2 = new System.Windows.Rect(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
+                box2 = new Rect(box.X, box.Y + un.P1.High + UNION_BAR_WIDE, un.P2.Wide, un.P2.High);
             }
             else
             {
-                box2 = new System.Windows.Rect(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
+                box2 = new Rect(box.X + un.P1.Wide + UNION_BAR_WIDE, box.Y, un.P2.Wide, un.P2.High);
             }
             if (box2.Contains(x, y))
                 return un.P2;

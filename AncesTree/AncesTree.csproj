@@ -62,6 +62,9 @@
     <Compile Include="Controls\ColorButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FlowNoScroll.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\LineStyleCombo.cs">
       <SubType>Component</SubType>
     </Compile>

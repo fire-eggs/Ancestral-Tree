@@ -62,7 +62,7 @@
             this.btnUnknownColor = new AncesTree.Controls.ColorButton();
             this.btnFemaleColor = new AncesTree.Controls.ColorButton();
             this.btnMaleColor = new AncesTree.Controls.ColorButton();
-            this.treePanel21 = new AncesTree.TreePanel2();
+            this.treePanel21 = new AncesTree.Controls.TreePanel();
             this.label14 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -436,7 +436,7 @@
 
         #endregion
 
-        private TreePanel2 treePanel21;
+        private Controls.TreePanel treePanel21;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;

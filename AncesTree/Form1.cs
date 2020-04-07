@@ -406,7 +406,7 @@ namespace AncesTree
 
         private void spinMaxGen_ValueChanged(object sender, EventArgs e)
         {
-            // TODO force rebuild
+            // this config changes requires a force rebuild
             personSel_SelectedIndexChanged(null, null); 
         }
     }
