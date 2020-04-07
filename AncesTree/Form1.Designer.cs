@@ -50,7 +50,6 @@
             this.btnSaveToImage = new System.Windows.Forms.Button();
             this.btnConfig = new System.Windows.Forms.Button();
             this.spinMaxGen = new System.Windows.Forms.NumericUpDown();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
