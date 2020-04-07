@@ -82,14 +82,18 @@ namespace AncesTree.TreeModel
             }
             _unionSet.Add(parent.UnionId, parent);
 
-
             // About to start the next layer down the tree. punt if we've hit the limit
             if (_genDepth >= _config.MaxDepth)
                 return;
 
             _genDepth = _genDepth + 1;
 
-            Union marr = who.SpouseIn.First();
+            // 20200407 - when selecting the 2d spouse of a multi-marriage, need
+            // to get the correct union.
+            Union marr = who.SpouseIn.Where(x => x.Id == parent.UnionId).FirstOrDefault();
+            if (marr == null) // shouldn't happen
+                return;
+
             foreach (var child in marr.Childs)
             {
                 switch (child.SpouseIn.Count)
